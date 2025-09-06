@@ -3,13 +3,26 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Virtual Environment
-venv/
-.venv/
+.Python
 env/
-.env/
+venv/
 
-# IDE / Editor
-.vscode/
+# IDEs and editors
 .idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Project-specific
+/results/
+/sample_docs/
+api_server.log

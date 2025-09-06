@@ -2,6 +2,7 @@ import os
 import json
 import sys
 import google.generativeai as genai
+from typing import Dict, Any
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -9,7 +10,6 @@ PLANNER_MODEL = "models/gemini-1.5-pro-latest"
 
 # ==============================================================================
 # --- PLANNER PROMPT ---
-# This prompt instructs the LLM to deconstruct a user's query.
 # ==============================================================================
 PLANNER_PROMPT = """
 You are an intelligent assistant that deconstructs a user's request into a structured plan for a retrieval and summarization system.
@@ -52,26 +52,44 @@ User Query: "{query}"
 # ==============================================================================
 
 
-def create_plan(user_query: str):
+def generate_query_plan(user_query: str) -> Dict[str, Any]:
     """
     Uses a generative model to create a structured plan from a user query.
+    Designed to be called from an API.
     """
     if not GEMINI_API_KEY:
-        print("Error: GEMINI_API_KEY environment variable not set.", file=sys.stderr)
-        return None
+        return {"error": "GEMINI_API_KEY environment variable not set."}
     genai.configure(api_key=GEMINI_API_KEY)
 
     prompt = PLANNER_PROMPT.format(query=user_query)
-
+    llm_response_text = ""
     try:
         model = genai.GenerativeModel(PLANNER_MODEL)
         response = model.generate_content(prompt)
+        llm_response_text = response.text
 
         # Clean the response to ensure it's valid JSON
-        json_text = response.text.strip().replace("```json", "").replace("```", "")
+        json_text = llm_response_text.strip().replace("```json", "").replace("```", "")
         plan = json.loads(json_text)
         return plan
     except Exception as e:
-        print(f"Error creating plan: {e}", file=sys.stderr)
-        print(f"LLM Response was: {response.text}", file=sys.stderr)
-        return None
+        return {
+            "error": f"Error creating plan: {e}",
+            "llm_response": llm_response_text
+        }
+
+
+def query_planner_cli(user_query: str):
+    """
+    CLI wrapper for the planning tool.
+    """
+    plan = generate_query_plan(user_query)
+    if "error" in plan:
+        print(f"Error: {plan['error']}", file=sys.stderr)
+        if "llm_response" in plan:
+            print(f"LLM Response was: {plan['llm_response']}", file=sys.stderr)
+    else:
+        print(json.dumps(plan, indent=2))
+
+# For backward compatibility
+create_plan = generate_query_plan

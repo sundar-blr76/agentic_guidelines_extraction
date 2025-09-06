@@ -1,15 +1,22 @@
 import json
+import logging
+from typing import List, Dict, Any
 import psycopg2
 from config import DB_CONFIG
 from embedding_service import generate_embeddings
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def get_db_connection():
     """Establishes a connection to the PostgreSQL database."""
     try:
-        return psycopg2.connect(**DB_CONFIG)
+        logging.info("Connecting to the database...")
+        conn = psycopg2.connect(**DB_CONFIG)
+        logging.info("Database connection successful.")
+        return conn
     except psycopg2.OperationalError as e:
-        print(f"Error: Could not connect to the database: {e}")
+        logging.error(f"Could not connect to the database: {e}")
         return None
 
 
@@ -31,59 +38,68 @@ def find_similar_guidelines(cursor, query_embedding, portfolio_id=None, top_k=5)
     base_query += " ORDER BY similarity DESC LIMIT %s;"
     params.append(top_k)
 
+    logging.info(f"Executing query with top_k={top_k} and portfolio_id='{portfolio_id}'")
     cursor.execute(base_query, params)
-    return cursor.fetchall()
+    results = cursor.fetchall()
+    logging.info(f"Found {len(results)} results from the database.")
+    return results
 
 
 def query_guidelines(
-    query: str, portfolio_id: str = None, top_k: int = 5, raw_output: bool = False
-):
+    query: str, portfolio_id: str = None, top_k: int = 5
+) -> List[Dict[str, Any]]:
     """
-    Performs a semantic search for guidelines based on a query.
-    Optionally filters by portfolio.
-    If raw_output is True, returns a JSON string of the results.
+    Performs a semantic search for guidelines and returns structured data.
+    This function is designed to be called from other modules, including an API.
+    It does not print to the console.
     """
-    if not raw_output:
-        print(f"Generating embedding for your query: '{query}'...")
-
+    logging.info(f"Starting guideline query for: '{query}'")
+    
+    logging.info("Generating embeddings for the query...")
     embeddings = generate_embeddings(texts=[query], task_type="RETRIEVAL_QUERY")
     if not embeddings:
-        if not raw_output:
-            print("Could not generate query embedding. Aborting.")
-        return None
+        logging.error("Failed to generate embeddings for the query.")
+        return []
     query_embedding = embeddings[0]
+    logging.info("Embeddings generated successfully.")
 
     conn = get_db_connection()
     if not conn:
-        return None
+        return []
 
     results = []
     try:
         with conn.cursor() as cursor:
-            if not raw_output:
-                print("Searching for similar guidelines...")
-            results = find_similar_guidelines(
+            db_results = find_similar_guidelines(
                 cursor, query_embedding, portfolio_id, top_k
             )
-    except Exception as e:
-        if not raw_output:
-            print(f"An error occurred during the database query: {e}")
-    finally:
-        conn.close()
-
-    if raw_output:
-        guideline_list = []
-        for row in results:
-            text, provenance, page, portfolio_name, similarity = row
-            guideline_list.append(
-                {
+            for i, row in enumerate(db_results):
+                text, provenance, page, portfolio_name, similarity = row
+                result_item = {
                     "portfolio_name": portfolio_name,
                     "guideline_text": text,
                     "provenance": provenance,
                     "page": page,
                     "similarity": similarity,
                 }
-            )
-        return json.dumps(guideline_list, indent=2)
-    else:
-        return results
+                logging.info(f"Processing result #{i+1}: Similarity={similarity}")
+                results.append(result_item)
+    except Exception as e:
+        logging.error(f"An exception occurred during database query: {e}", exc_info=True)
+        return []
+    finally:
+        if conn:
+            conn.close()
+            logging.info("Database connection closed.")
+
+    logging.info(f"Query finished. Returning {len(results)} results.")
+    return results
+
+def query_guidelines_api(
+    query: str, portfolio_id: str = None, top_k: int = 5
+) -> List[Dict[str, Any]]:
+    """
+    API wrapper for performing a semantic search for guidelines.
+    """
+    logging.info("API call received for query_guidelines_api.")
+    return query_guidelines(query, portfolio_id, top_k)

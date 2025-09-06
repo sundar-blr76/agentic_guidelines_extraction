@@ -1,5 +1,9 @@
 google-genai>=0.14.0
+google-generativeai
 psycopg2-binary>=2.9
 typer[all]
 rich
 ruff
+fastapi
+uvicorn
+python-multipart

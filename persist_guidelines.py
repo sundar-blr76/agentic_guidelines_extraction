@@ -2,14 +2,17 @@ import json
 import psycopg2
 from psycopg2 import sql
 from config import DB_CONFIG
+from typing import Dict, Any
 
 
 def get_db_connection():
-    """Establishes a connection to the PostgreSQL database using config.py."""
+    """Est-ablishes a connection to the PostgreSQL database using config.py."""
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         return conn
     except psycopg2.OperationalError as e:
+        # In a library/API context, raising an exception is often better than printing.
+        # However, for the CLI, printing is user-friendly. We'll keep it for now.
         print(
             "Error: Could not connect to the database. Please check your connection settings in config.py."
         )
@@ -17,15 +20,13 @@ def get_db_connection():
         return None
 
 
-def _delete_portfolio_if_exists(cursor, portfolio_id):
+def _delete_portfolio_if_exists(cursor, portfolio_id) -> bool:
     """Deletes a portfolio and all its related data if it already exists."""
     cursor.execute("SELECT 1 FROM portfolio WHERE portfolio_id = %s;", (portfolio_id,))
     if cursor.fetchone():
-        print(f"  - Portfolio '{portfolio_id}' already exists. Deleting old data...")
         cursor.execute(
             "DELETE FROM portfolio WHERE portfolio_id = %s;", (portfolio_id,)
         )
-        print(f"  - Old data for portfolio '{portfolio_id}' deleted.")
         return True
     return False
 
@@ -80,12 +81,54 @@ def _ingest_guidelines(cursor, portfolio_id, doc_id, guidelines):
         )
 
 
-def ingest_file(json_path: str):
+def persist_guidelines_from_data(
+    data: Dict[str, Any], human_readable_digest: str
+) -> Dict[str, Any]:
     """
-    Reads a JSON file and ingests its data into the database.
-    If the portfolio already exists, it will be deleted and replaced.
+    Performs the core logic of ingesting parsed data into the database.
+    This function is designed to be called from an API or other modules.
     """
-    print(f"Starting ingestion for: {json_path}")
+    conn = get_db_connection()
+    if not conn:
+        return {"status": "error", "message": "Database connection failed."}
+
+    try:
+        with conn.cursor() as cursor:
+            portfolio_id = data["portfolio_id"]
+
+            was_deleted = _delete_portfolio_if_exists(cursor, portfolio_id)
+
+            _ingest_portfolio(cursor, data)
+            _ingest_document(cursor, data, human_readable_digest)
+            _ingest_guidelines(
+                cursor, portfolio_id, data["doc_id"], data["guidelines"]
+            )
+
+            conn.commit()
+
+            return {
+                "status": "success",
+                "portfolio_id": portfolio_id,
+                "doc_id": data["doc_id"],
+                "ingested_guidelines": len(data["guidelines"]),
+                "was_reingested": was_deleted,
+            }
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return {"status": "error", "message": str(e)}
+    finally:
+        if conn:
+            conn.close()
+
+
+def persist_guidelines_from_file(json_path: str):
+    """
+    CLI wrapper that reads a JSON file and persists its data into the database.
+    Handles file I/O and prints progress to the console.
+    """
+    print(f"Starting persistence for: {json_path}")
 
     try:
         with open(json_path, "r") as f:
@@ -105,37 +148,17 @@ def ingest_file(json_path: str):
         print(f"Warning: Markdown file not found at {md_path}. Digest will be empty.")
         human_readable_digest = ""
 
-    conn = get_db_connection()
-    if not conn:
-        return
+    # Call the core logic function
+    result = persist_guidelines_from_data(data, human_readable_digest)
 
-    try:
-        cursor = conn.cursor()
-        portfolio_id = data["portfolio_id"]
-
-        if _delete_portfolio_if_exists(cursor, portfolio_id):
-            conn.commit()
-
-        _ingest_portfolio(cursor, data)
-        conn.commit()
-        print(f"  - Ingested portfolio: {portfolio_id}")
-
-        _ingest_document(cursor, data, human_readable_digest)
-        conn.commit()
-        print(f"  - Ingested document: {data['doc_id']}")
-
-        _ingest_guidelines(cursor, portfolio_id, data["doc_id"], data["guidelines"])
-        conn.commit()
-        print(f"  - Ingested {len(data['guidelines'])} guidelines.")
-
-        print("Ingestion successful. All changes have been committed.")
-
-    except Exception as e:
-        print(f"An error occurred during ingestion: {e}")
-        if conn:
-            conn.rollback()
+    # Print the results to the console
+    if result["status"] == "success":
+        print(f"  - Portfolio '{result['portfolio_id']}' processed.")
+        if result["was_reingested"]:
+            print("  - Existing data was deleted and re-persisted.")
+        print(f"  - Persisted document: {result['doc_id']}")
+        print(f"  - Persisted {result['ingested_guidelines']} guidelines.")
+        print("Persistence successful. All changes have been committed.")
+    else:
+        print(f"An error occurred during persistence: {result['message']}")
         print("Transaction has been rolled back.")
-    finally:
-        if conn:
-            cursor.close()
-            conn.close()

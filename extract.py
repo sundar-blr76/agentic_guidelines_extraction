@@ -1,9 +1,11 @@
+import os
 import logging
 from datetime import datetime, timezone, timedelta
-from google import genai
+import google.generativeai as genai
 from google.genai import types as genai_types
 import json
 import re
+from typing import Tuple, Dict, Any
 
 
 # --- Custom IST Logging Configuration ---
@@ -22,49 +24,46 @@ class ISTFormatter(logging.Formatter):
 # Get the root logger, clear existing handlers, and add our custom one
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-if logger.hasHandlers():
-    logger.handlers.clear()
-
-handler = logging.StreamHandler()
-handler.setFormatter(ISTFormatter("%(asctime)s - %(levelname)s - %(message)s"))
-logger.addHandler(handler)
+if not logger.hasHandlers():
+    handler = logging.StreamHandler()
+    handler.setFormatter(ISTFormatter("%(asctime)s - %(levelname)s - %(message)s"))
+    logger.addHandler(handler)
 # --- End of Logging Configuration ---
 
-client = genai.Client()
+
 
 
 def extract_json_from_text(text):
     """More robustly extracts a JSON array from a string, handling markdown code blocks."""
-    # Regex to find a JSON array, possibly wrapped in markdown
     match = re.search(r"```json\s*(\[.*?\])\s*```", text, re.DOTALL)
     if match:
         return match.group(1)
-
-    # Fallback for non-markdown JSON
     start_index = text.find("[")
     end_index = text.rfind("]")
     if start_index != -1 and end_index != -1:
         return text[start_index : end_index + 1]
-
     return None
 
 
-def extract_guidelines_from_pdf(pdf_path: str):
-    with open(pdf_path, "rb") as f:
-        pdf_bytes = f.read()
-
-    model_name = "gemini-2.5-pro"
+def extract_guidelines_from_pdf(
+    pdf_path: str,
+) -> Tuple[Dict[str, Any], str]:
+    """
+    Core logic to extract guidelines from PDF bytes using the Gemini API.
+    Designed to be called from an API.
+    """
+    model_name = "gemini-1.5-pro-latest"
     prompt = """
-You are an expert in investment policy statement (IPS) analysis. 
+You are an expert in investment policy statement (IPS) analysis.
 Your task has TWO PARTS:
 
 ====================================================
 STRICT INSTRUCTIONS
 ====================================================
-- Your extraction MUST be **100% bound to the input document**.  
-- DO NOT add, infer, or guess information from outside the document.  
-- If content is incomplete or ambiguous in the source, reproduce it exactly as-is.  
-- Never use your internal knowledge to “complete” a rule or a table.  
+- Your extraction MUST be **100% bound to the input document**.
+- DO NOT add, infer, or guess information from outside the document.
+- If content is incomplete or ambiguous in the source, reproduce it exactly as-is.
+- Never use your internal knowledge to “complete” a rule or a table.
 - The output must reflect only the content explicitly found in the IPS.
 
 ====================================================
@@ -106,7 +105,7 @@ RULES:
 
 Additional Extraction Rules:
 - Always split compound guidelines into separate JSON objects (atomic rules).
-   * If a guideline has multiple points (separated by semicolons, “and/or”, or sub-points (a), (b), (c)), 
+   * If a guideline has multiple points (separated by semicolons, “and/or”, or sub-points (a), (b), (c)),
      create one rule per point with rule_id suffixes: e.g., "V-C-3-a-1", "V-C-3-a-2".
 - Use strict rule_id format:
    * Narrative rules → "Part.Section.Subsection"
@@ -153,25 +152,20 @@ OUTPUT FORMAT
 2. Second output: Human-readable digest of guidelines (verbatim, compliance-friendly).
 
     """
-
-    pdf_part = genai_types.Part(
-        inline_data=genai_types.Blob(data=pdf_bytes, mime_type="application/pdf")
-    )
-    contents = [prompt, pdf_part]
+    pdf_file = genai.upload_file(path=pdf_path, mime_type="application/pdf")
+    contents = [prompt, pdf_file]
 
     logging.info("Initiating Google AI API call...")
     logging.info(f"  - Model: {model_name}")
     logging.info(f"  - Prompt length: {len(prompt)} characters")
-    logging.info(f"  - PDF size: {len(pdf_bytes)} bytes")
+    logging.info(f"  - PDF size: {os.path.getsize(pdf_path)} bytes")
 
     start_time_utc = datetime.now(timezone.utc)
-
-    response = client.models.generate_content(model=model_name, contents=contents)
-
+    model = genai.GenerativeModel(model_name)
+    response = model.generate_content(contents)
     end_time_utc = datetime.now(timezone.utc)
     duration = (end_time_utc - start_time_utc).total_seconds()
 
-    # Convert to IST for logging
     ist_tz = timezone(timedelta(hours=5, minutes=30))
     start_time_ist = start_time_utc.astimezone(ist_tz)
     end_time_ist = end_time_utc.astimezone(ist_tz)
@@ -183,8 +177,6 @@ OUTPUT FORMAT
     logging.info(f"  - Response length: {len(response.text)} characters")
 
     response_text = response.text.strip()
-
-    # --- Robustly separate JSON and human-readable text ---
     json_string = extract_json_from_text(response_text)
 
     if not json_string:
@@ -192,19 +184,16 @@ OUTPUT FORMAT
         logging.debug(f"Full response text: {response_text}")
         raise ValueError("No JSON found in the response")
 
-    # The human-readable part is identified by its header
+    # The human-readable part is everything after the JSON block.
+    last_brace_index = response_text.rfind("]")
     human_readable_text = ""
-    digest_header = "PART 2: HUMAN-READABLE GUIDELINES"
-    header_pos = response_text.find(digest_header)
-    if header_pos != -1:
-        # Get the text after the header and clean it up
-        human_readable_text = response_text[header_pos + len(digest_header) :]
-        human_readable_text = re.sub(
-            r"^=+\s*", "", human_readable_text, flags=re.MULTILINE
-        ).strip()
-    else:
-        logging.warning("Human-readable digest header not found in the response.")
+    if last_brace_index != -1:
+        human_readable_text = response_text[last_brace_index + 1 :].strip()
+        # Clean up potential markdown formatting leftovers
+        human_readable_text = re.sub(r"^```", "", human_readable_text, flags=re.MULTILINE).strip()
 
     parsed_json = json.loads(json_string)
-
     return parsed_json, human_readable_text
+
+
+

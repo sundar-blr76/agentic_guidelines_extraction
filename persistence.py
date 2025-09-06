@@ -1,6 +1,7 @@
 import psycopg2
 from config import DB_CONFIG
 from embedding_service import generate_embeddings
+from typing import Dict, Any
 
 # --- Configuration ---
 BATCH_SIZE = 100  # Process 100 guidelines at a time
@@ -11,6 +12,8 @@ def _get_db_connection():
     try:
         return psycopg2.connect(**DB_CONFIG)
     except psycopg2.OperationalError as e:
+        # For the API, we'll let the calling function handle the error.
+        # For the CLI, this print is still useful.
         print(f"Error: Could not connect to the database: {e}")
         return None
 
@@ -48,30 +51,30 @@ def _update_embeddings_in_db(cursor, updates):
         cursor.execute(update_query, (embedding, portfolio_id, rule_id))
 
 
-def persist_embeddings():
+def stamp_missing_embeddings() -> Dict[str, Any]:
     """
-    Finds all guidelines without a vector embedding, generates embeddings for them,
-    and stores the results in the database.
+    Core logic to find, generate, and store embeddings for guidelines.
+    Designed to be called from an API. Returns a status dictionary.
     """
-    print("Starting embedding persistence process...")
     conn = _get_db_connection()
     if not conn:
-        return
+        return {"status": "error", "message": "Database connection failed."}
 
     try:
         with conn.cursor() as cursor:
             guidelines_to_process = _get_guidelines_without_embeddings(cursor)
             if not guidelines_to_process:
-                print("No new guidelines to embed. All guidelines are up to date.")
-                return
+                return {
+                    "status": "no_action",
+                    "message": "No new guidelines to embed. All guidelines are up to date.",
+                }
 
-            print(f"Found {len(guidelines_to_process)} guidelines to embed.")
+            total_found = len(guidelines_to_process)
             total_processed = 0
             for i in range(0, len(guidelines_to_process), BATCH_SIZE):
                 batch = guidelines_to_process[i : i + BATCH_SIZE]
                 texts_to_embed = [_generate_composite_text(g) for g in batch]
 
-                print(f"  - Generating embeddings for batch {i // BATCH_SIZE + 1}...")
                 embeddings = generate_embeddings(
                     texts=texts_to_embed,
                     task_type="RETRIEVAL_DOCUMENT",
@@ -79,22 +82,44 @@ def persist_embeddings():
                 )
 
                 if not embeddings:
-                    print("  - Failed to generate embeddings for this batch. Skipping.")
+                    # Log this failure for the batch but try to continue
                     continue
 
                 updates = [(g[0], g[1], emb) for g, emb in zip(batch, embeddings)]
-
-                print(f"  - Storing {len(updates)} new embeddings in the database...")
                 _update_embeddings_in_db(cursor, updates)
-
-                total_processed += len(batch)
-                print(f"  - Progress: {total_processed}/{len(guidelines_to_process)}")
+                total_processed += len(updates)
 
             conn.commit()
-            print("\nEmbedding persistence successful. Changes have been committed.")
+            return {
+                "status": "success",
+                "total_found": total_found,
+                "processed_count": total_processed,
+            }
 
     except Exception as e:
-        print(f"An error occurred during embedding persistence: {e}")
-        conn.rollback()
+        if conn:
+            conn.rollback()
+        return {"status": "error", "message": str(e)}
     finally:
-        conn.close()
+        if conn:
+            conn.close()
+
+
+def persist_embeddings():
+    """
+    CLI wrapper for the embedding persistence process.
+    Handles printing status to the console.
+    """
+    print("Starting embedding persistence process...")
+    result = stamp_missing_embeddings()
+
+    if result["status"] == "error":
+        print(f"An error occurred: {result['message']}")
+    elif result["status"] == "no_action":
+        print(result["message"])
+    elif result["status"] == "success":
+        print(f"Found {result['total_found']} guidelines to process.")
+        print(f"Successfully generated and stored {result['processed_count']} embeddings.")
+        if result['total_found'] != result['processed_count']:
+            print(f"Warning: Failed to process {result['total_found'] - result['processed_count']} guidelines.")
+        print("Embedding persistence successful. Changes have been committed.")

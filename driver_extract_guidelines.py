@@ -1,3 +1,14 @@
+# ==============================================================================
+# --- DEVELOPER ASSISTANCE SCRIPT ---
+# This script is a one-time utility for developers. Its purpose is to process
+# a directory of PDF investment policy statements and generate the initial
+# structured JSON and human-readable Markdown files.
+#
+# These generated files serve as the source data for the 'ingest' command
+# and can be used for cross-referencing with database entries during development.
+#
+# This script is NOT part of the main application workflow or the API.
+# ==============================================================================
 import glob
 import os
 import json
