@@ -1,0 +1,1033 @@
+{
+  "portfolio_id": "state_highway_patrol_retirement_system__investment_policy_statement",
+  "portfolio_name": "State Highway Patrol Retirement System - Investment Policy Statement",
+  "doc_id": "state_highway_patrol_retirement_system__investment_policy_statement",
+  "doc_name": "State Highway Patrol Retirement System - Investment Policy Statement.pdf",
+  "doc_date": "2025-09-04",
+  "guidelines": [
+    {
+      "rule_id": "9.6-InvestmentObjectives-1",
+      "part": "9.6",
+      "section": "INVESTMENT OBJECTIVES",
+      "subsection": null,
+      "text": "The overall long-term investment objective is for the System is to earn 7.25% over a market cycle.",
+      "page": 1,
+      "provenance": "INVESTMENT OBJECTIVES, page 1"
+    },
+    {
+      "rule_id": "9.6-InvestmentObjectives-2",
+      "part": "9.6",
+      "section": "INVESTMENT OBJECTIVES",
+      "subsection": null,
+      "text": "This investment objective should be achieved with the least required level of portfolio volatility.",
+      "page": 1,
+      "provenance": "INVESTMENT OBJECTIVES, page 1"
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R1",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Public Equity is 45.0%, with a range of 35% - 55%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Public Equity",
+        "target_percent": 45.0,
+        "min_percent": 35.0,
+        "max_percent": 55.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R2",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Global Equity is 23.0%, with a range of 18% - 28%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Global Equity",
+        "sub_category_target_percent": 23.0,
+        "min_percent": 18.0,
+        "max_percent": 28.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R3",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for U.S. Equity is 22.0%, with a range of 17% - 27%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "U.S. Equity",
+        "sub_category_target_percent": 22.0,
+        "min_percent": 17.0,
+        "max_percent": 27.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R4",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for International Equity is 0.0%, with a range of 0% - 5%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "International Equity",
+        "sub_category_target_percent": 0.0,
+        "min_percent": 0.0,
+        "max_percent": 5.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R5",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Alternative Investments is 30.0%, with a range of 20% - 40%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Alternative Investments",
+        "target_percent": 30.0,
+        "min_percent": 20.0,
+        "max_percent": 40.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R6",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Absolute Return is 5.0%, with a range of 0% - 10%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Absolute Return",
+        "sub_category_target_percent": 5.0,
+        "min_percent": 0.0,
+        "max_percent": 10.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R7",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Private Equity is 20.0%, with a range of 15% - 25%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Private Equity",
+        "sub_category_target_percent": 20.0,
+        "min_percent": 15.0,
+        "max_percent": 25.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R8",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Real Assets is 5.0%, with a range of 0% - 10%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Real Assets",
+        "sub_category_target_percent": 5.0,
+        "min_percent": 0.0,
+        "max_percent": 10.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R9",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Real Estate is 5.0%, with a range of 0% - 10%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Real Estate",
+        "target_percent": 5.0,
+        "sub_category_target_percent": 5.0,
+        "min_percent": 0.0,
+        "max_percent": 10.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R10",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Fixed Income is 20.0%, with a range of 10% - 30%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Fixed Income",
+        "target_percent": 20.0,
+        "min_percent": 10.0,
+        "max_percent": 30.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R11",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Core Fixed Income is 8.0%, with a range of 3% - 13%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Core Fixed Income",
+        "sub_category_target_percent": 8.0,
+        "min_percent": 3.0,
+        "max_percent": 13.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R12",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Opportunistic fixed income is 9.0%, with a range of 4% - 14%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Opportunistic",
+        "sub_category_target_percent": 9.0,
+        "min_percent": 4.0,
+        "max_percent": 14.0
+      }
+    },
+    {
+      "rule_id": "9.6-AssetAllocation-T1-R13",
+      "part": "9.6",
+      "section": "ASSET ALLOCATION GUIDELINES",
+      "subsection": "Long-Term Targets",
+      "text": "The target allocation for Cash is 3.0%, with a range of 0% - 8%.",
+      "page": 4,
+      "provenance": "ASSET ALLOCATION GUIDELINES, Long-Term Targets Table, page 4",
+      "structured": {
+        "asset_class": "Cash",
+        "sub_category_target_percent": 3.0,
+        "min_percent": 0.0,
+        "max_percent": 8.0
+      }
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Equity-1",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Equity Securities",
+      "text": "System assets may invest in the following types of investments: Common stocks",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Equity Securities, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Equity-2",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Equity Securities",
+      "text": "System assets may invest in the following types of investments: Convertible preferred stocks",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Equity Securities, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Equity-3",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Equity Securities",
+      "text": "System assets may invest in the following types of investments: American depository receipts (ADRs) of non-U.S. companies",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Equity Securities, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Equity-4",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Equity Securities",
+      "text": "System assets may invest in the following types of investments: Stocks of non-U.S. companies (Ordinary shares)",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Equity Securities, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Equity-5",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Equity Securities",
+      "text": "System assets may invest in the following types of investments: Equity collective pools, mutual funds, and exchange traded funds",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Equity Securities, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-1",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Tactical asset allocation strategies",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-2",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Absolute return strategies",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-3",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Long-short strategies",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-4",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Hedge funds or hedge fund-of-fund strategies",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-5",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Private equity and debt strategies",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-6",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Timber investments",
+      "page": 5,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 5"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-7",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Energy master limited partnerships",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-8",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Infrastructure strategies",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Alternative-9",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Alternative Investments",
+      "text": "System assets may invest in the following types of investments: Alternative collective pools, mutual funds, and exchange traded funds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Alternative Investments, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-RealEstate-1",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Real Estate",
+      "text": "System assets may invest in the following types of investments: U.S. and non-U.S. public real estate (REITS)",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Real Estate, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-RealEstate-2",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Real Estate",
+      "text": "System assets may invest in the following types of investments: U.S. and non-U.S. private real estate",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Real Estate, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-RealEstate-3",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Real Estate",
+      "text": "System assets may invest in the following types of investments: Real estate collective pools, mutual funds, and exchange traded funds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Real Estate, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-1",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: U.S. government and agency securities",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-2",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Municipal bonds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-3",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Corporate notes and bonds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-4",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Convertible notes and bonds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-5",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Mortgage-backed bonds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-6",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Preferred stock",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-7",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Fixed income securities of foreign governments and corporations",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-8",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Below investment grade corporate bonds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-9",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Tactical fixed income strategies",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-10",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Private lending strategies",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-FixedIncome-11",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Fixed Income Securities",
+      "text": "System assets may invest in the following types of investments: Fixed income collective pools, mutual funds, and exchange traded funds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Fixed Income Securities, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Cash-1",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Cash Equivalents",
+      "text": "System assets may invest in the following types of investments: Treasury bills",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Cash Equivalents, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Cash-2",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Cash Equivalents",
+      "text": "System assets may invest in the following types of investments: Commercial paper",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Cash Equivalents, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Cash-3",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Cash Equivalents",
+      "text": "System assets may invest in the following types of investments: Banker's acceptances",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Cash Equivalents, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Cash-4",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Cash Equivalents",
+      "text": "System assets may invest in the following types of investments: Repurchase agreements",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Cash Equivalents, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Cash-5",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Cash Equivalents",
+      "text": "System assets may invest in the following types of investments: Certificates of deposit",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Cash Equivalents, page 6"
+    },
+    {
+      "rule_id": "9.6-PermissibleInvestments-Cash-6",
+      "part": "9.6",
+      "section": "PERMISSIBLE INVESTMENTS",
+      "subsection": "Cash Equivalents",
+      "text": "System assets may invest in the following types of investments: Money market collective pools, mutual funds, and exchange traded funds",
+      "page": 6,
+      "provenance": "PERMISSIBLE INVESTMENTS, Cash Equivalents, page 6"
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-1",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": null,
+      "text": "The investment objective of the System: 7.25% (actuarial rate of return)",
+      "page": 6,
+      "provenance": "PERFORMANCE BENCHMARKS, 1, page 6"
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-2",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": null,
+      "text": "A blended benchmark of market indices based on the targeted asset allocation for the System portfolio:",
+      "page": 6,
+      "provenance": "PERFORMANCE BENCHMARKS, 2, page 6"
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R1",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for U.S. Equity is the Russell 3000 Index with a weight of 22%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "U.S. Equity",
+        "benchmark": "Russell 3000 Index",
+        "weight_percent": 22
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R2",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Global Equity is the MSCI ACWI Index with a weight of 23%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Global Equity",
+        "benchmark": "MSCI ACWI Index",
+        "weight_percent": 23
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R3",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Absolute Return is the HFRI Fund of Funds Composite Index with a weight of 5%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Absolute Return",
+        "benchmark": "HFRI Fund of Funds Composite Index",
+        "weight_percent": 5
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R4",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Real Assets is the Real Assets Composite with a weight of 5%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Real Assets",
+        "benchmark": "Real Assets Composite",
+        "weight_percent": 5
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R5",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Private Equity is the Private Equity Composite with a weight of 20%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Private Equity",
+        "benchmark": "Private Equity Composite",
+        "weight_percent": 20
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R6",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Real Estate is the Real Estate Composite with a weight of 5%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Real Estate",
+        "benchmark": "Real Estate Composite",
+        "weight_percent": 5
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R7",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Core Fixed Income is the Bloomberg U.S. Aggregate Bond Index with a weight of 8%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Core Fixed Income",
+        "benchmark": "Bloomberg U.S. Aggregate Bond Index",
+        "weight_percent": 8
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R8",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Global Opportunistic Fixed Income is the Credit Suisse Leveraged Loans Index with a weight of 9%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Global Opportunistic Fixed Income",
+        "benchmark": "Credit Suisse Leveraged Loans Index",
+        "weight_percent": 9
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-T1-R9",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": "Table",
+      "text": "The benchmark for Cash is the ML 91-Day T-Bill Index with a weight of 3%.",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, Table, page 7",
+      "structured": {
+        "asset_class": "Cash",
+        "benchmark": "ML 91-Day T-Bill Index",
+        "weight_percent": 3
+      }
+    },
+    {
+      "rule_id": "9.6-PerformanceBenchmarks-3",
+      "part": "9.6",
+      "section": "PERFORMANCE BENCHMARKS",
+      "subsection": null,
+      "text": "The System will be compared to a peer universe of similar sized public pension funds",
+      "page": 7,
+      "provenance": "PERFORMANCE BENCHMARKS, 3, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-1",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": null,
+      "text": "The following guidelines only apply to separately managed accounts.",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-2",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": null,
+      "text": "Mutual funds and collective vehicles are not expected to comply with these guidelines but rather are bound to their fund prospectus for mutual funds and ETFs or the governing documents for collective pools.",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Restrictions-1",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "An equity manager may not: Hold more than 15% of the account value in a single issuer",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Restrictions-2",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "An equity manager may not: Where a sector is greater than 10% of the benchmark, allow that sector to exceed 60% of the portfolio",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Restrictions-3",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "An equity manager may not: Where a sector is 10% or less of the benchmark, allow that sector to exceed 40% of the portfolio",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Restrictions-4",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "An equity manager may not: Invest in international-domiciled securities exceeding 20% of portfolio value in a domestic mandate",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Restrictions-5",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "An equity manager may not: Allow one country to be more than 20 percentage points above the country weighting of the relative benchmark in an international mandate",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Restrictions-6",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "An equity manager may not: Invest in emerging markets exceeding 35% of portfolio value in a developed international mandate",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-1",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Private placements",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-2",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Unregistered or restricted stock",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-3",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Derivatives",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-4",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Margin Trading/Short Sales",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-5",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Commodities",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-6",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Real Estate Property (excluding REITs)",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-7",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Guaranteed Insurance Contracts",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-SeparateAccount-Equity-Prohibitions-8",
+      "part": "9.6",
+      "section": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES",
+      "subsection": "Equity",
+      "text": "Equity managers are prohibited from investing in the following: Securities issued by Highway Patrol Retirement System or its affiliates.",
+      "page": 7,
+      "provenance": "SEPARATE ACCOUNT PORTFOLIO GUIDELINES, Equity, page 7"
+    },
+    {
+      "rule_id": "9.6-CoreFixedIncome-1",
+      "part": "9.6",
+      "section": "Core Fixed Income",
+      "subsection": null,
+      "text": "A core fixed income allocation will be diversified as to type of security, issuer, coupon, and maturity.",
+      "page": 8,
+      "provenance": "Core Fixed Income, page 8"
+    },
+    {
+      "rule_id": "9.6-CoreFixedIncome-2",
+      "part": "9.6",
+      "section": "Core Fixed Income",
+      "subsection": null,
+      "text": "Qualifying bonds, at the time of purchase, will be rated as investment-grade by at least two nationally recognized bond rating services.",
+      "page": 8,
+      "provenance": "Core Fixed Income, page 8"
+    },
+    {
+      "rule_id": "9.6-CoreFixedIncome-3-1",
+      "part": "9.6",
+      "section": "Core Fixed Income",
+      "subsection": null,
+      "text": "Generally, the average maturity of a fixed income allocation will be ten years or less, although individual securities may be longer.",
+      "page": 8,
+      "provenance": "Core Fixed Income, page 8"
+    },
+    {
+      "rule_id": "9.6-CoreFixedIncome-4",
+      "part": "9.6",
+      "section": "Core Fixed Income",
+      "subsection": null,
+      "text": "No more than ten percent of a fixed income allocation will be invested in the securities of any one issuer and no more than five percent in any one issue, with the exception of U.S. government securities.",
+      "page": 8,
+      "provenance": "Core Fixed Income, page 8"
+    },
+    {
+      "rule_id": "9.6-CoreFixedIncome-5",
+      "part": "9.6",
+      "section": "Core Fixed Income",
+      "subsection": null,
+      "text": "Diversification of the bond portfolio will be accomplished by investing in a combination of U.S. government bonds, U.S. agency bonds, U.S. corporate bonds, high yield bonds, and non-U.S. bonds.",
+      "page": 8,
+      "provenance": "Core Fixed Income, page 8"
+    },
+    {
+      "rule_id": "9.6-CoreFixedIncome-6",
+      "part": "9.6",
+      "section": "Core Fixed Income",
+      "subsection": null,
+      "text": "Managers are prohibited from using derivative instruments.",
+      "page": 8,
+      "provenance": "Core Fixed Income, page 8"
+    },
+    {
+      "rule_id": "9.6-ManagerSelection-1",
+      "part": "9.6",
+      "section": "Manager Selection",
+      "subsection": null,
+      "text": "Investment Managers shall be selected in accordance with the Selection of Investment Managers and Agents Policy as well as the Manager Search and Termination Policy.",
+      "page": 8,
+      "provenance": "Manager Selection, page 8"
+    },
+    {
+      "rule_id": "9.6-ManagerSelection-2",
+      "part": "9.6",
+      "section": "Manager Selection",
+      "subsection": null,
+      "text": "The Board will consider investments that enhance the welfare of the State of Ohio, and Ohio citizens, where such investments offer safety and quality of return comparable to other investments currently available.",
+      "page": 8,
+      "provenance": "Manager Selection, page 8"
+    },
+    {
+      "rule_id": "9.6-ManagerSelection-3",
+      "part": "9.6",
+      "section": "Manager Selection",
+      "subsection": null,
+      "text": "Equal consideration will be given to investments otherwise qualifying under this section that involve minority-owned and controlled firms, or firms owned and controlled by women, either alone or in joint venture with other firms.",
+      "page": 8,
+      "provenance": "Manager Selection, page 8"
+    },
+    {
+      "rule_id": "9.6-ManagerSelection-4",
+      "part": "9.6",
+      "section": "Manager Selection",
+      "subsection": null,
+      "text": "The Board will, at least annually, establish a policy with the goal to increase utilization of Ohio-qualified investment managers, when an Ohio-qualified investment manager offers quality, services, and safety comparable to other investment managers otherwise available.",
+      "page": 8,
+      "provenance": "Manager Selection, page 8"
+    },
+    {
+      "rule_id": "9.6-ManagerSelection-5",
+      "part": "9.6",
+      "section": "Manager Selection",
+      "subsection": null,
+      "text": "The Board will, at least annually, establish a policy with the goal to increase utilization of Ohio-qualified agents for the execution of domestic equity and fixed income trades on behalf of the System, when an Ohio-qualified agent offers quality, services, and safety comparable to other agents otherwise available.",
+      "page": 8,
+      "provenance": "Manager Selection, page 8"
+    },
+    {
+      "rule_id": "9.6-VotingOfProxies-1",
+      "part": "9.6",
+      "section": "Voting of Proxies",
+      "subsection": null,
+      "text": "Investment managers are responsible for voting proxies and should be made in the best interest of investors.",
+      "page": 8,
+      "provenance": "Voting of Proxies, page 8"
+    },
+    {
+      "rule_id": "9.6-ExecutionOfSecurityTrades-1",
+      "part": "9.6",
+      "section": "Execution of Security Trades",
+      "subsection": null,
+      "text": "The Investment Committee expects the purchase and sale of its securities to be made in a manner designed to receive the combination of best price and execution.",
+      "page": 8,
+      "provenance": "Execution of Security Trades, page 8"
+    },
+    {
+      "rule_id": "9.6-DirectedBrokerage-1",
+      "part": "9.6",
+      "section": "Directed Brokerage",
+      "subsection": null,
+      "text": "In separately managed equity accounts, HPRS investment managers are encouraged to use brokers that are under contract with HPRS to provide execution-only brokerage.",
+      "page": 8,
+      "provenance": "Directed Brokerage, page 8"
+    },
+    {
+      "rule_id": "9.6-DirectedBrokerage-2-1",
+      "part": "9.6",
+      "section": "Directed Brokerage",
+      "subsection": null,
+      "text": "Every five years, these brokers will be reviewed;",
+      "page": 8,
+      "provenance": "Directed Brokerage, page 8"
+    },
+    {
+      "rule_id": "9.6-DirectedBrokerage-2-2",
+      "part": "9.6",
+      "section": "Directed Brokerage",
+      "subsection": null,
+      "text": "the Board may consider issuing a Request for Proposal if it is deemed necessary.",
+      "page": 8,
+      "provenance": "Directed Brokerage, page 8"
+    },
+    {
+      "rule_id": "9.6-DirectedBrokerage-3",
+      "part": "9.6",
+      "section": "Directed Brokerage",
+      "subsection": null,
+      "text": "An investment manager may be excused from the directed brokerage requirement if it can document favorable execution.",
+      "page": 8,
+      "provenance": "Directed Brokerage, page 8"
+    },
+    {
+      "rule_id": "9.6-PeriodicReviews-1-1",
+      "part": "9.6",
+      "section": "Periodic Portfolio and Policy Reviews",
+      "subsection": null,
+      "text": "Asset allocation should be reviewed at least annually to ensure that the plan is on track to achieve the investment goals.",
+      "page": 9,
+      "provenance": "Periodic Portfolio and Policy Reviews, page 9"
+    },
+    {
+      "rule_id": "9.6-PeriodicReviews-1-2",
+      "part": "9.6",
+      "section": "Periodic Portfolio and Policy Reviews",
+      "subsection": null,
+      "text": "Asset allocation should be reviewed at least annually ... that all the major assumptions used to establish the plan remain reasonable.",
+      "page": 9,
+      "provenance": "Periodic Portfolio and Policy Reviews, page 9"
+    },
+    {
+      "rule_id": "9.6-PeriodicReviews-2-1",
+      "part": "9.6",
+      "section": "Periodic Portfolio and Policy Reviews",
+      "subsection": null,
+      "text": "A comprehensive review of asset allocation in the form of asset-liability modeling should be conducted every five years,",
+      "page": 9,
+      "provenance": "Periodic Portfolio and Policy Reviews, page 9"
+    },
+    {
+      "rule_id": "9.6-PeriodicReviews-2-2",
+      "part": "9.6",
+      "section": "Periodic Portfolio and Policy Reviews",
+      "subsection": null,
+      "text": "A comprehensive review of asset allocation in the form of asset-liability modeling should be conducted ... whenever a major structural change occurs in liabilities or investment assets.",
+      "page": 9,
+      "provenance": "Periodic Portfolio and Policy Reviews, page 9"
+    },
+    {
+      "rule_id": "9.6-PeriodicReviews-3",
+      "part": "9.6",
+      "section": "Periodic Portfolio and Policy Reviews",
+      "subsection": null,
+      "text": "An asset allocation plan may require reconsideration when it becomes apparent that the assets are not keeping pace with the liabilities of a plan.",
+      "page": 9,
+      "provenance": "Periodic Portfolio and Policy Reviews, page 9"
+    },
+    {
+      "rule_id": "9.6-PeriodicReviews-4",
+      "part": "9.6",
+      "section": "Periodic Portfolio and Policy Reviews",
+      "subsection": null,
+      "text": "To ensure the continued relevance of the guidelines and objectives, as established in this investment policy statement, the Board should review the investment policy annually, or as deemed necessary.",
+      "page": 9,
+      "provenance": "Periodic Portfolio and Policy Reviews, page 9"
+    }
+  ]
+}
