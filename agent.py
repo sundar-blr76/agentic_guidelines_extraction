@@ -1,78 +1,63 @@
-import requests
-import json
+import os
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.prompts import ChatPromptTemplate
+from tools import query_planner, guideline_search, summarizer
 import typer
 from rich.console import Console
 
 # --- Configuration ---
-MCP_SERVER_URL = "http://0.0.0.0:8000"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+AGENT_MODEL = "gemini-1.5-pro-latest"
 console = Console()
 
-def execute_agent_workflow(user_goal: str):
+# --- LangChain Agent Setup ---
+
+def create_agent():
+    """Creates and returns a LangChain agent executor."""
+    
+    # 1. Define the tools the agent can use
+    tools = [query_planner, guideline_search, summarizer]
+    
+    # 2. Create the prompt template
+    # This template instructs the agent on how to behave and use the tools.
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "You are a helpful assistant that answers questions about investment guidelines."),
+        ("user", "{input}"),
+        ("placeholder", "{agent_scratchpad}"),
+    ])
+    
+    # 3. Initialize the LLM
+    llm = ChatGoogleGenerativeAI(model=AGENT_MODEL, google_api_key=GEMINI_API_KEY)
+    
+    # 4. Create the agent
+    agent = create_tool_calling_agent(llm, tools, prompt)
+    
+    # 5. Create the agent executor
+    # The executor is what actually runs the agent and executes the tools.
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+    
+    return agent_executor
+
+def run_agent(user_goal: str):
     """
-    Orchestrates a workflow to answer a user's goal by calling the MCP server.
+    Initializes and runs the LangChain agent with the user's goal.
     """
-    console.print(f"[bold cyan]Goal:[/bold cyan] {user_goal}")
-
-    # 1. Plan the query
-    console.print("\n[yellow]Step 1: Planning the query...[/yellow]")
-    try:
-        plan_response = requests.post(
-            f"{MCP_SERVER_URL}/mcp/plan_query",
-            json={"user_query": user_goal}
-        )
-        plan_response.raise_for_status()
-        plan = plan_response.json()
-        console.print(f"  - [green]Success:[/green] Plan created.")
-        console.print(f"    - Search Query: '{plan['search_query']}'")
-        console.print(f"    - Top K: {plan['top_k']}")
-    except requests.exceptions.RequestException as e:
-        console.print(f"[bold red]Error:[/bold red] Could not create a plan. {e}")
+    if not GEMINI_API_KEY:
+        console.print("[bold red]Error:[/bold red] GEMINI_API_KEY environment variable not set.")
         return
-
-    # 2. Execute the search query
-    console.print("\n[yellow]Step 2: Executing the search...[/yellow]")
-    try:
-        query_response = requests.post(
-            f"{MCP_SERVER_URL}/mcp/query_guidelines",
-            json={"query_text": plan["search_query"], "top_k": plan["top_k"]}
-        )
-        query_response.raise_for_status()
-        search_results = query_response.json()
-        console.print(f"  - [green]Success:[/green] Found {len(search_results)} relevant guidelines.")
-    except requests.exceptions.RequestException as e:
-        console.print(f"[bold red]Error:[/bold red] Could not execute the query. {e}")
-        return
-
-    if not search_results:
-        console.print("\n[bold yellow]Result:[/bold yellow] No relevant guidelines found to answer the question.")
-        return
-
-    # 3. Summarize the results
-    console.print("\n[yellow]Step 3: Summarizing the findings...[/yellow]")
-    try:
-        sources_for_summary = [
-            f"Guideline: {result['guideline']} (Provenance: {result['provenance']})"
-            for result in search_results
-        ]
         
-        summarize_response = requests.post(
-            f"{MCP_SERVER_URL}/mcp/summarize",
-            json={
-                "question": plan["summary_instruction"],
-                "sources": sources_for_summary
-            }
-        )
-        summarize_response.raise_for_status()
-        summary = summarize_response.json()
-        console.print(f"  - [green]Success:[/green] Summary generated.")
-    except requests.exceptions.RequestException as e:
-        console.print(f"[bold red]Error:[/bold red] Could not generate a summary. {e}")
-        return
-
-    # 4. Present the final answer
+    console.print(f"[bold cyan]Goal:[/bold cyan] {user_goal}")
+    
+    agent_executor = create_agent()
+    
+    console.print("\n[yellow]Invoking agent...[/yellow]\n")
+    
+    # The agent will automatically figure out which tools to call and in what order.
+    response = agent_executor.invoke({"input": user_goal})
+    
     console.print("\n[bold green]Final Answer:[/bold green]")
-    console.print(summary["summary"])
-
+    console.print(response["output"])
 
 if __name__ == "__main__":
-    typer.run(execute_agent_workflow)
+    typer.run(run_agent)

@@ -7,3 +7,5 @@ ruff
 fastapi
 uvicorn
 python-multipart
+langchain
+langchain-google-genai
