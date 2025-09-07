@@ -17,6 +17,7 @@ venv/
 *.log
 *.sql
 *.sqlite
+/logs/
 
 # OS-specific
 .DS_Store

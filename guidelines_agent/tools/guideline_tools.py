@@ -70,11 +70,14 @@ def summarizer(summary_instruction: str, search_results: list) -> str:
 @tool("extract_and_validate_document", args_schema=ExtractAndValidateInput)
 def extract_and_validate_document(file_path: str) -> dict:
     """Extracts, validates, and digests a PDF document."""
-    with open(file_path, "rb") as f:
-        files = {"file": (os.path.basename(file_path), f, "application/pdf")}
-        response = requests.post(f"{MCP_SERVER_URL}/mcp/extract_guidelines", files=files)
-    response.raise_for_status()
-    return response.json()
+    try:
+        with open(file_path, "rb") as f:
+            files = {"file": (os.path.basename(file_path), f, "application/pdf")}
+            response = requests.post(f"{MCP_SERVER_URL}/mcp/extract_guidelines", files=files)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        return {"error": e.response.json()["detail"]}
 
 @tool("persist_guidelines", args_schema=PersistInput)
 def persist_guidelines(data: str, human_readable_digest: str) -> dict:

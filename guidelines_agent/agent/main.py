@@ -1,5 +1,6 @@
 import os
 import typer
+import logging
 from rich.console import Console
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
@@ -20,19 +21,43 @@ AGENT_MODEL = "gemini-1.5-pro-latest"
 console = Console()
 app = typer.Typer()
 
+import logging
+
+from guidelines_agent.core.custom_logging import CustomCallbackHandler
+
 # --- Agent Definitions ---
 
 def create_query_agent():
     """Creates an agent executor for answering questions."""
+    logger = logging.getLogger(__name__)
+    logger.info("Creating query agent...")
+    
     tools = [query_planner, guideline_search, summarizer]
+    logger.info(f"Tools loaded: {[tool.name for tool in tools]}")
+    
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are an assistant that answers questions about investment guidelines. You must use the provided tools to first plan the query, then search for guidelines, and finally summarize the results to form an answer."),
         ("user", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
     ])
+    logger.info("Prompt template created.")
+    
     llm = ChatGoogleGenerativeAI(model=AGENT_MODEL, google_api_key=GEMINI_API_KEY)
+    logger.info(f"LLM initialized with model: {AGENT_MODEL}")
+    
     agent = create_tool_calling_agent(llm, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    logger.info("Tool calling agent created.")
+    
+    callback_handler = CustomCallbackHandler()
+    agent_executor = AgentExecutor(
+        agent=agent, 
+        tools=tools, 
+        verbose=True, 
+        callbacks=[callback_handler]
+    )
+    logger.info("AgentExecutor created with custom callback handler. Query agent is ready.")
+    
+    return agent_executor
 
 def create_ingestion_agent():
     """Creates an agent executor for ingesting documents."""

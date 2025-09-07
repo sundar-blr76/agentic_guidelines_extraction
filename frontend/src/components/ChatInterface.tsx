@@ -36,13 +36,13 @@ const ChatInterface: React.FC = () => {
       if (selectedFile) {
         const formData = new FormData();
         formData.append('file', selectedFile);
-        const response = await axios.post('/agent/ingest', formData, {
+        const response = await axios.post('http://172.24.160.231:8000/agent/ingest', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         responseText = JSON.stringify(response.data, null, 2);
         setSelectedFile(null); // Clear file after sending
       } else {
-        const response = await axios.post('/agent/invoke', { input: userMessage });
+        const response = await axios.post('http://172.24.160.231:8000/agent/query', { input: userMessage });
         responseText = JSON.stringify(response.data, null, 2);
       }
       setMessages(prev => [...prev, { sender: 'bot', text: responseText }]);

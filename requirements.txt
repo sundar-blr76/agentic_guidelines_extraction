@@ -9,3 +9,6 @@ uvicorn
 python-multipart
 langchain
 langchain-google-genai
+pytest
+httpx
+pytest-asyncio
