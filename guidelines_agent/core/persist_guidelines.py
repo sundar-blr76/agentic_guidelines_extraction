@@ -1,7 +1,7 @@
 import json
 import psycopg2
 from psycopg2 import sql
-from config import DB_CONFIG
+from .config import DB_CONFIG
 from typing import Dict, Any
 
 

@@ -2,8 +2,8 @@ import json
 import logging
 from typing import List, Dict, Any
 import psycopg2
-from config import DB_CONFIG
-from embedding_service import generate_embeddings
+from .config import DB_CONFIG
+from .embedding_service import generate_embeddings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

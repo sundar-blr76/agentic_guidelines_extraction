@@ -7,12 +7,13 @@ import sys
 # Add the project root to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from query_planner import generate_query_plan
-from query import query_guidelines_api
-from persist_guidelines import persist_guidelines_from_data
-from summarize import generate_summary
-from extract import extract_guidelines_from_pdf
-from persistence import stamp_missing_embeddings
+from guidelines_agent.core.query_planner import generate_query_plan
+from guidelines_agent.core.query import query_guidelines_api
+from guidelines_agent.core.persist_guidelines import persist_guidelines_from_data
+from guidelines_agent.core.summarize import generate_summary
+from guidelines_agent.core.extract import extract_guidelines_from_pdf
+from guidelines_agent.core.persistence import stamp_missing_embeddings
+from guidelines_agent.agent.main import create_query_agent, create_ingestion_agent
 
 # --- Pydantic Models for MCP ---
 
@@ -55,8 +56,10 @@ class PersistGuidelinesOutput(BaseModel):
     was_reingested: bool
 
 class ExtractGuidelinesOutput(BaseModel):
-    guidelines: List[Dict[str, Any]]
-    human_readable_digest: str
+    is_valid_document: bool
+    validation_summary: str
+    guidelines: Optional[List[Dict[str, Any]]] = None
+    human_readable_digest: Optional[str] = None
 
 class StampEmbeddingOutput(BaseModel):
     status: str
@@ -189,21 +192,19 @@ def persist_guidelines_mcp(input: PersistGuidelinesInput = Body(...)) -> Persist
 
 @app.post("/mcp/extract_guidelines", tags=["MCP Tools"])
 async def extract_guidelines_mcp(file: UploadFile = File(...)) -> ExtractGuidelinesOutput:
-    """MCP endpoint for the Guideline Extraction tool."""
+    """MCP endpoint for the Guideline Extraction and Validation tool."""
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload a PDF.")
 
-    temp_pdf_path = f"temp_{{file.filename}}"
+    temp_pdf_path = f"temp_{file.filename}"
     try:
         with open(temp_pdf_path, "wb") as buffer:
             buffer.write(await file.read())
 
-        guidelines_list, guidelines_text = extract_guidelines_from_pdf(temp_pdf_path)
+        # This single function call now performs both extraction and validation
+        extraction_result = extract_guidelines_from_pdf(temp_pdf_path)
 
-        return ExtractGuidelinesOutput(
-            guidelines=guidelines_list,
-            human_readable_digest=guidelines_text,
-        )
+        return ExtractGuidelinesOutput(**extraction_result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to process PDF: {str(e)}")
     finally:
@@ -225,6 +226,40 @@ def stamp_embedding_mcp() -> StampEmbeddingOutput:
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- Agent Endpoints ---
+
+class AgentInvokeInput(BaseModel):
+    input: str
+
+query_agent = create_query_agent()
+ingestion_agent = create_ingestion_agent()
+
+@app.post("/agent/invoke", tags=["Agent"])
+async def agent_invoke(input: AgentInvokeInput):
+    """Invokes the query agent."""
+    try:
+        response = query_agent.invoke({"input": input.input})
+        return {"output": response.get("output")}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/agent/ingest", tags=["Agent"])
+async def agent_ingest(file: UploadFile = File(...)):
+    """Invokes the ingestion agent."""
+    temp_file_path = f"temp_{file.filename}"
+    try:
+        with open(temp_file_path, "wb") as buffer:
+            buffer.write(await file.read())
+        
+        response = ingestion_agent.invoke({"file_path": temp_file_path})
+        return {"output": response.get("output")}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
+
 
 if __name__ == "__main__":
     import uvicorn

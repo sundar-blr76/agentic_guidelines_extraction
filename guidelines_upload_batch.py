@@ -14,7 +14,7 @@ import os
 import json
 import re
 from datetime import datetime
-from extract import extract_guidelines_from_pdf
+from guidelines_agent.core.extract import extract_guidelines_from_pdf
 
 
 def generate_clean_id(text):

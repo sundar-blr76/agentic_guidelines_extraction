@@ -9,12 +9,12 @@ from rich.table import Table
 from datetime import datetime
 
 # Import the refactored functions from other modules
-from persist_guidelines import persist_guidelines_from_file
-from persistence import persist_embeddings
-from query import query_guidelines
-from summarize import summarize_cli
-from query_planner import query_planner_cli
-from extract import extract_guidelines_from_pdf
+from guidelines_agent.core.persist_guidelines import persist_guidelines_from_file
+from guidelines_agent.core.persistence import persist_embeddings
+from guidelines_agent.core.query import query_guidelines
+from guidelines_agent.core.summarize import summarize_cli
+from guidelines_agent.core.query_planner import query_planner_cli
+from guidelines_agent.core.extract import extract_guidelines_from_pdf
 
 # Initialize Typer app and Rich console
 app = typer.Typer(

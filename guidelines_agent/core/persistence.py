@@ -1,6 +1,6 @@
 import psycopg2
-from config import DB_CONFIG
-from embedding_service import generate_embeddings
+from .config import DB_CONFIG
+from .embedding_service import generate_embeddings
 from typing import Dict, Any
 
 # --- Configuration ---
