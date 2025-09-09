@@ -1,15 +1,16 @@
 import React from 'react';
-import { CssBaseline, Container } from '@mui/material';
+import { CssBaseline, Container, ThemeProvider } from '@mui/material';
 import ChatInterface from './components/ChatInterface';
+import theme from './theme';
 
 function App() {
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="md" sx={{ height: '100vh' }}>
+      <Container maxWidth="md" sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
         <ChatInterface />
       </Container>
-    </>
+    </ThemeProvider>
   );
 }
 
