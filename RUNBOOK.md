@@ -58,7 +58,7 @@ The server is configured to read its logging setup from `logging.yaml`. This fil
 Execute the following command to run the server in the background:
 
 ```bash
-/home/sundar/sundar_projects/agentic_guidelines_extraction/venv/bin/python -m uvicorn guidelines_agent.mcp_server.main:app --host 0.0.0.0 --port 8000 &
+/home/sundar/sundar_projects/agentic_guidelines_extraction/venv/bin/python -m uvicorn guidelines_agent.mcp_server.main:app --host 0.0.0.0 --port 8000 --log-config logging.yaml &
 ```
 
 **To monitor the logs:**

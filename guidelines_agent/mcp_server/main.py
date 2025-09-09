@@ -1,7 +1,4 @@
 import logging
-import logging.config
-from datetime import datetime
-from zoneinfo import ZoneInfo
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Body, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,30 +20,6 @@ from guidelines_agent.core.persistence import stamp_missing_embeddings
 from guidelines_agent.agent.main import create_query_agent, create_ingestion_agent
 from guidelines_agent.core.custom_logging import ISTFormatter
 
-# --- Logging Configuration ---
-LOGGING_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "ist_formatter": {
-            "()": ISTFormatter,
-            "format": "%(asctime)s - %(levelname)-8s - %(name)s - %(message)s",
-        },
-    },
-    "handlers": {
-        "file": {
-            "class": "logging.FileHandler",
-            "formatter": "ist_formatter",
-            "filename": "logs/api_server.log",
-            "mode": "a",
-        },
-    },
-    "root": {
-        "handlers": ["file"],
-        "level": "INFO",
-    },
-}
-logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 
@@ -133,14 +106,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.concurrency import run_in_threadpool
+
+# ... (existing code)
+
 # --- API Endpoints ---
 @app.post("/agent/query", tags=["Agent"])
 async def agent_query(request: Request, input: AgentInvokeInput):
+    logger.info(f"Received query: {input.input}")
     try:
-        response = request.app.state.query_agent.invoke({"input": input.input})
+        # Run the synchronous, blocking agent code in a separate thread
+        response = await run_in_threadpool(request.app.state.query_agent.invoke, {"input": input.input})
+        logger.info(f"Agent response: {response.get('output')}")
         return {"output": response.get("output")}
     except Exception as e:
-        logger.error(f"Error during query: {e}", exc_info=True)
+        logger.error(f"Error during query for input '{input.input}': {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/agent/ingest", tags=["Agent"])
@@ -152,7 +132,10 @@ async def agent_ingest(request: Request, file: UploadFile = File(...)):
             content = await file.read()
             buffer.write(content)
             logger.info(f"Saved file to {temp_file_path}, size: {len(content)} bytes")
-        response = request.app.state.ingestion_agent.invoke({"file_path": temp_file_path})
+        
+        # Run the synchronous, blocking agent code in a separate thread
+        response = await run_in_threadpool(request.app.state.ingestion_agent.invoke, {"file_path": temp_file_path})
+        
         logger.info(f"Agent response: {response}")
         return {"output": response.get("output")}
     except Exception as e:
