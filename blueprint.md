@@ -1,1 +1,0 @@
-# See previous blueprint for workflow (Gemini + embeddings + DB integration)

@@ -68,13 +68,14 @@ def create_ingestion_agent():
         generate_upload_summary,
     ]
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an assistant that ingests and validates investment guideline documents. Follow these steps:\n1. Use the `extract_and_validate_document` tool on the file path.\n2. From the JSON output of the previous step, extract the value of the `guidelines` key and the `human_readable_digest` key.\n3. Pass these extracted values to the `persist_guidelines` tool.\n4. After persisting, call the `stamp_embeddings` tool.\n5. Finally, use the outputs from the previous steps to call `generate_upload_summary` and create a final summary."),
+        ("system", "You are an assistant that ingests and validates investment guideline documents. Your final output must be a human-readable summary. Follow these steps:\n1. Use the `extract_and_validate_document` tool on the file path.\n2. **Check the `is_valid_document` field in the output. If it is `False`, you must stop immediately and use the `validation_summary` as your final answer.**\n3. If the document is valid, take the entire JSON output from the extraction tool (which includes metadata and the guidelines list). Pass this complete JSON object as the `data` argument to the `persist_guidelines` tool. Also pass the `human_readable_digest` to the corresponding argument.\n4. After persisting, call the `stamp_embeddings` tool.\n5. Finally, use the outputs from the previous steps to call `generate_upload_summary` and use its output as your final answer."),
         ("user", "Please ingest this file: {file_path}"),
         ("placeholder", "{agent_scratchpad}"),
     ])
     llm = ChatGoogleGenerativeAI(model=AGENT_MODEL, google_api_key=GEMINI_API_KEY)
     agent = create_tool_calling_agent(llm, tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=True)
+
 
 
 # --- CLI Commands ---

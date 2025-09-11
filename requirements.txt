@@ -1,5 +1,4 @@
 google-genai>=0.14.0
-google-generativeai
 psycopg2-binary>=2.9
 typer[all]
 rich
@@ -12,3 +11,8 @@ langchain-google-genai
 pytest
 httpx
 pytest-asyncio
+
+# Notes:
+# - Keep `venv/` out of the repository; it's already in .gitignore. If venv is committed, remove it with:
+#     git rm -r --cached venv
+# - If you need to support older Google SDKs, add them explicitly. `google-genai` provides `google.genai`.

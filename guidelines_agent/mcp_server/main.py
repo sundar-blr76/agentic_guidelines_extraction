@@ -17,7 +17,7 @@ from guidelines_agent.core.persist_guidelines import persist_guidelines_from_dat
 from guidelines_agent.core.summarize import generate_summary
 from guidelines_agent.core.extract import extract_guidelines_from_pdf
 from guidelines_agent.core.persistence import stamp_missing_embeddings
-from guidelines_agent.agent.main import create_query_agent, create_ingestion_agent
+from guidelines_agent.agent.agent_main import create_query_agent, create_ingestion_agent
 from guidelines_agent.core.custom_logging import ISTFormatter
 
 logger = logging.getLogger(__name__)
