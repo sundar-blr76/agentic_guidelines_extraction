@@ -5,6 +5,10 @@ from rich.console import Console
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
+from typing import TypedDict, Annotated, List, Dict, Any
+from langgraph.graph import StateGraph, END
+import json
+
 from guidelines_agent.tools.guideline_tools import (
     query_planner,
     guideline_search,
@@ -14,24 +18,20 @@ from guidelines_agent.tools.guideline_tools import (
     stamp_embeddings,
     generate_upload_summary,
 )
+from guidelines_agent.core.custom_logging import CustomCallbackHandler
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 AGENT_MODEL = "gemini-1.5-pro-latest"
 console = Console()
 app = typer.Typer()
-
-import logging
-
-from guidelines_agent.core.custom_logging import CustomCallbackHandler
+logger = logging.getLogger(__name__)
 
 # --- Agent Definitions ---
 
 def create_query_agent():
-    """Creates an agent executor for answering questions."""
-    logger = logging.getLogger(__name__)
+    """Creates a LangChain agent executor for answering questions."""
     logger.info("Creating query agent...")
-    
     tools = [query_planner, guideline_search, summarizer]
     logger.info(f"Tools loaded: {[tool.name for tool in tools]}")
     
@@ -59,24 +59,92 @@ def create_query_agent():
     
     return agent_executor
 
+# --- LangGraph Ingestion Workflow ---
+
+class IngestionState(TypedDict):
+    """Defines the state for the ingestion graph."""
+    file_path: str
+    file_name: str
+    extraction_result: dict
+    persistence_result: dict
+    final_summary: str
+
+def extract_node(state: IngestionState) -> IngestionState:
+    """Node to extract and validate the document."""
+    logger.info(f"--- Starting Extraction for {state['file_path']} ---")
+    file_path = state['file_path']
+    result = extract_and_validate_document.invoke({"file_path": file_path})
+    return {
+        "file_name": os.path.basename(file_path),
+        "extraction_result": result
+    }
+
+def persist_node(state: IngestionState) -> IngestionState:
+    """Node to persist the extracted guidelines."""
+    logger.info("--- Starting Persistence ---")
+    extraction_data = state['extraction_result']
+    result = persist_guidelines.invoke({
+        "data": extraction_data,
+        "human_readable_digest": extraction_data.get("human_readable_digest", "")
+    })
+    # After persisting, stamp the embeddings
+    stamp_embeddings.invoke({})
+    return {"persistence_result": result}
+
+def summarize_node(state: IngestionState) -> IngestionState:
+    """Node to generate a final summary of the ingestion process."""
+    logger.info("--- Generating Summary ---")
+    extraction_result = state['extraction_result']
+    persistence_result = state.get('persistence_result', {})  # May not exist if validation failed
+
+    is_valid = extraction_result.get('is_valid_document', False)
+    persistence_status = persistence_result.get('status', 'skipped')
+
+    summary = generate_upload_summary.invoke({
+        "doc_name": extraction_result.get('doc_name', 'Unknown Document'),
+        "portfolio_name": extraction_result.get('portfolio_name', 'Unknown Portfolio'),
+        "is_valid_document": is_valid,
+        "validation_summary": extraction_result.get('validation_summary', 'No validation summary available.'),
+        "guideline_count": len(extraction_result.get('guidelines', []) or []),
+        "persistence_status": persistence_status,
+        "persistence_message": persistence_result.get('message', 'An unknown error occurred.')
+    })
+    return {"final_summary": summary}
+
+def should_persist(state: IngestionState) -> str:
+    """Conditional edge to decide whether to persist the data."""
+    logger.info("--- Checking Document Validity ---")
+    if state['extraction_result'].get('is_valid_document', False):
+        logger.info("--- Document is valid. Proceeding to persistence. ---")
+        return "persist"
+    else:
+        logger.info("--- Document is invalid. Skipping persistence. ---")
+        return "summarize"
+
 def create_ingestion_agent():
-    """Creates an agent executor for ingesting documents."""
-    tools = [
-        extract_and_validate_document,
-        persist_guidelines,
-        stamp_embeddings,
-        generate_upload_summary,
-    ]
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an assistant that ingests and validates investment guideline documents. Your final output must be a human-readable summary. Follow these steps:\n1. Use the `extract_and_validate_document` tool on the file path.\n2. **Check the `is_valid_document` field in the output. If it is `False`, you must stop immediately and use the `validation_summary` as your final answer.**\n3. If the document is valid, take the entire JSON output from the extraction tool (which includes metadata and the guidelines list). Pass this complete JSON object as the `data` argument to the `persist_guidelines` tool. Also pass the `human_readable_digest` to the corresponding argument.\n4. After persisting, call the `stamp_embeddings` tool.\n5. Finally, use the outputs from the previous steps to call `generate_upload_summary` and use its output as your final answer."),
-        ("user", "Please ingest this file: {file_path}"),
-        ("placeholder", "{agent_scratchpad}"),
-    ])
-    llm = ChatGoogleGenerativeAI(model=AGENT_MODEL, google_api_key=GEMINI_API_KEY)
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    """Creates a LangGraph agent for ingesting documents."""
+    logger.info("Creating ingestion graph...")
+    workflow = StateGraph(IngestionState)
 
+    workflow.add_node("extract", extract_node)
+    workflow.add_node("persist", persist_node)
+    workflow.add_node("summarize", summarize_node)
 
+    workflow.set_entry_point("extract")
+    workflow.add_conditional_edges(
+        "extract",
+        should_persist,
+        {
+            "persist": "persist",
+            "summarize": "summarize",
+        }
+    )
+    workflow.add_edge("persist", "summarize")
+    workflow.add_edge("summarize", END)
+
+    graph = workflow.compile()
+    logger.info("Ingestion graph compiled successfully.")
+    return graph
 
 # --- CLI Commands ---
 
@@ -106,7 +174,7 @@ def run_ingestion_agent(file_path: str):
     console.print("\n[yellow]Invoking Ingestion Agent...[/yellow]\n")
     response = agent_executor.invoke({"file_path": file_path})
     console.print("\n[bold green]Final Status:[/bold green]")
-    console.print(response["output"])
+    console.print(response.get("final_summary", "No summary generated."))
 
 if __name__ == "__main__":
     app()

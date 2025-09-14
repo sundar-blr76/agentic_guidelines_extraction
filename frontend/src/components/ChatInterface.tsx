@@ -41,6 +41,7 @@ const ChatInterface: React.FC = () => {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         responseText = response.data.output; // Extract the output string
+        console.info('File uploaded, response received:', responseText);
         setSelectedFile(null); // Clear file after sending
       } else {
         const response = await axios.post('http://172.24.160.231:8000/agent/query', { input: userMessage });

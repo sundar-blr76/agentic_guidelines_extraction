@@ -44,18 +44,21 @@ def extract_guidelines_from_pdf(pdf_path: str) -> Dict[str, Any]:
     """
     model_name = "gemini-1.5-pro-latest"
     prompt = """
-You are an expert financial document analyst. Your task is to analyze the provided document and determine if it is an Investment Policy Statement (IPS). Then, you will extract its contents.
+You are an expert financial document analyst. Your task is to analyze the provided document and determine if it is an Investment Policy Statement (IPS). Then, you will extract its contents. 
 
 Your output MUST be a single, valid JSON object.
 
 ====================================================
 TASK & OUTPUT STRUCTURE
 ====================================================
-Analyze the document and produce a JSON object with the following structure:
-
 {
   "is_valid_document": boolean,
   "validation_summary": string,
+  "portfolio_id": string,
+  "portfolio_name": string,
+  "doc_id": string,
+  "doc_name": string,
+  "doc_date": string,
   "guidelines": array | null,
   "human_readable_digest": string | null
 }
@@ -64,30 +67,137 @@ Analyze the document and produce a JSON object with the following structure:
 FIELD DESCRIPTIONS
 ====================================================
 1.  `is_valid_document`:
-    - Set to `true` if the document is an Investment Policy Statement (IPS) or a similar set of investment guidelines.
-    - Set to `false` if it is any other type of document (e.g., a marketing brochure, a lunch menu, a quarterly report).
+    - true if the document is an Investment Policy Statement (IPS) or similar investment guideline.
+    - false otherwise (e.g., brochure, marketing doc, quarterly report).
 
 2.  `validation_summary`:
-    - A concise, one-sentence explanation of your decision.
-    - Example (if true): "The document is a valid Investment Policy Statement for the PRIM board."
-    - Example (if false): "The document appears to be a marketing brochure and does not contain investment guidelines."
+    - One sentence explaining your decision.
+    - Example (true): "The document is a valid Investment Policy Statement for the PRIM board."
+    - Example (false): "The document appears to be a marketing brochure and does not contain investment guidelines."
 
-3.  `guidelines`:
-    - If `is_valid_document` is `false`, this field MUST be `null`.
-    - If `true`, extract ALL investment guidelines into a JSON array. Each rule must be a JSON object with the fields: "rule_id", "part", "section", "subsection", "text", "page", "provenance", and optionally "structured_data".
-    - STRICTLY follow all extraction rules from the previous version (hierarchy, verbatim text, tables, etc.).
+3.  `portfolio_id`:
+    - If valid: extract the most concise portfolio/entity ID (e.g., "PBGC", "UNJSPF").
+    - If invalid: derive from content if possible, else "Unknown Portfolio".
 
-4.  `human_readable_digest`:
-    - If `is_valid_document` is `false`, this field MUST be `null`.
-    - If `true`, produce a human-readable digest of the extracted content, grouped by section, with inline provenance.
+4.  `portfolio_name`:
+    - If valid: the descriptive portfolio name (e.g., "PBGC Single-Employer Policy Portfolio").
+    - If invalid: "Unknown Portfolio".
+
+5.  `doc_id`:
+    - Combine `portfolio_id` and `doc_date`. Example: "PBGC_2019-04-01".
+
+6.  `doc_name`:
+    - Official document title (cover page or header).
+
+7.  `doc_date`:
+    - Publication/effective date in YYYY-MM-DD.
+    - If day not given, default to '01'.
+
+8.  `guidelines`:
+    - If invalid: null.
+    - If valid: extract ALL rules into an array of JSON objects, each with:
+        {
+          "rule_id": string (unique, sequential),
+          "part": string (e.g., "V"),
+          "section": string (heading/subheading),
+          "subsection": string | null,
+          "text": string (verbatim rule/constraint),
+          "page": integer,
+          "provenance": string (section headings),
+          "structured_data": object | null (for tables/ranges, optional)
+        }
+    - Consider as a guideline **any**: objective, constraint, policy, requirement, limit, permitted/prohibited activity, responsibility, benchmark, threshold, or range.
+    - Include rules from prose, numbered/bulleted lists, AND tables.
+
+9.  `human_readable_digest`:
+    - If invalid: null.
+    - If valid: a digest grouped by section, rules expressed in plain sentences, with inline provenance and page refs.
 
 ====================================================
-STRICT INSTRUCTIONS
+STRICT EXTRACTION RULES
 ====================================================
-- Your entire output must be a single, valid JSON object. Do not include any text before or after the JSON block.
-- If the document is not a valid IPS, you MUST set `guidelines` and `human_readable_digest` to `null`.
-- Your extraction of guidelines (if valid) MUST be 100% bound to the input document. Do not infer or add external information.
-    """
+- Do not omit rules: cover objectives, strategic considerations, governance, asset allocation, benchmarks, ranges, LDI targets, permitted/prohibited activities, ownership/security limits, reporting, and risk mgmt.
+- Capture tables (like asset allocation ranges) as structured_data objects (array of row objects).
+- Text must be verbatim from document, no paraphrasing.
+- If in doubt, include it as a guideline.
+- Output must remain valid JSON.
+
+====================================================
+EXAMPLES (MUST FOLLOW THESE EXACT OBJECT FORMATS)
+====================================================
+
+Example A — Permitted activity: Derivatives
+{
+  "rule_id": "PERM-001",
+  "part": "V",
+  "section": "Permitted Activities and Delegations",
+  "subsection": "Derivatives",
+  "text": "Derivatives may be utilized only to take or support positions relating to allowed asset classes for non-speculative purposes.",
+  "page": 6,
+  "provenance": "V. Permitted Activities and Delegations; 2. Derivatives",
+  "structured_data": {
+    "type": "permitted_activity",
+    "name": "Derivatives",
+    "allowed_purposes": [
+      "hedging",
+      "liability-driven positioning",
+      "cash management"
+    ],
+    "prohibitions": [
+      "use for leverage to replicate leveraged positions",
+      "speculative trading"
+    ],
+    "governing_phrase": "non-speculative purposes"
+  }
+}
+
+Example B — Ownership limit (hard numeric constraint)
+{
+  "rule_id": "LIMIT-001",
+  "part": "V",
+  "section": "Other Requirements and Limitations",
+  "subsection": "Ownership Limit",
+  "text": "PBGC will limit its holding of any class of securities in any company to no more than five percent of the total outstanding securities of such class.",
+  "page": 8,
+  "provenance": "V. Other Requirements and Limitations; 1. Ownership Limit",
+  "structured_data": {
+    "type": "numeric_limit",
+    "subject": "holding of any class of securities in any company",
+    "threshold": 5,
+    "threshold_unit": "percent",
+    "action_on_violation": "liquidate sufficient securities as soon as prudently feasible to reduce to threshold"
+  }
+}
+
+Example C — Performance / Reporting requirement
+{
+  "rule_id": "REPORT-001",
+  "part": "VI",
+  "section": "Performance Reporting and Risk Management",
+  "subsection": "Performance Reporting",
+  "text": "Monthly and quarterly investment reports will be prepared by PBGC and will be submitted by the Director to the Board.",
+  "page": 6,
+  "provenance": "VI. Performance Reporting and Risk Management; a. Performance Reporting",
+  "structured_data": {
+    "type": "reporting_requirement",
+    "reports": [
+      {
+        "name": "Monthly investment report",
+        "recipient": "Director -> Board",
+        "frequency": "monthly"
+      },
+      {
+        "name": "Quarterly investment performance report",
+        "recipient": "Director -> Board; Advisory Committee",
+        "frequency": "quarterly"
+      }
+    ],
+    "notes": "Include performance metrics, manager breaches, and comparative benchmarks"
+  }
+}
+
+End of examples.
+"""
     
     logging.info(f"Starting extraction and validation for: {pdf_path}")
     

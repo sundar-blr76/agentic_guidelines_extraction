@@ -42,10 +42,13 @@ class PersistInput(BaseModel):
     human_readable_digest: str = Field(..., description="The human-readable text digest of the guidelines.")
 
 class UploadSummaryInput(BaseModel):
-    file_name: str
+    doc_name: str
+    portfolio_name: str
+    is_valid_document: bool
+    validation_summary: str
     guideline_count: int
     persistence_status: str
-    validation_summary: str
+    persistence_message: str = ""
 
 # --- LangChain Tools ---
 
@@ -86,11 +89,21 @@ def stamp_embeddings() -> dict:
     return stamp_missing_embeddings()
 
 @tool("generate_upload_summary", args_schema=UploadSummaryInput)
-def generate_upload_summary(file_name: str, validation_summary: str, guideline_count: int, persistence_status: str) -> str:
+def generate_upload_summary(
+    doc_name: str,
+    portfolio_name: str,
+    is_valid_document: bool,
+    validation_summary: str,
+    guideline_count: int,
+    persistence_status: str,
+    persistence_message: str,
+) -> str:
     """Generates a coherent, human-readable summary of the upload status."""
-    # This tool can be implemented with a direct LLM call or a simple f-string
-    # for now, a simple formatted string is efficient.
+    if not is_valid_document:
+        return f"Failed to ingest document. Reason: {validation_summary}"
+
     if persistence_status == "success":
-        return f"Successfully ingested '{file_name}'. {validation_summary} Found and saved {guideline_count} guidelines."
+        return f"Successfully ingested '{doc_name}' for portfolio '{portfolio_name}'. Found and saved {guideline_count} guidelines."
     else:
-        return f"Failed to ingest '{file_name}'. Reason: {validation_summary}"
+        return f"Failed to ingest '{doc_name}'. The document was valid, but a persistence error occurred: {persistence_message}"
+

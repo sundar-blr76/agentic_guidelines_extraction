@@ -137,7 +137,9 @@ async def agent_ingest(request: Request, file: UploadFile = File(...)):
         response = await run_in_threadpool(request.app.state.ingestion_agent.invoke, {"file_path": temp_file_path})
         
         logger.info(f"Agent response: {response}")
-        return {"output": response.get("output")}
+        # LangGraph returns the final state. Extract the summary.
+        final_summary = response.get("final_summary", "Ingestion process completed, but no summary was generated.")
+        return {"output": final_summary}
     except Exception as e:
         logger.error(f"Error during ingestion: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
