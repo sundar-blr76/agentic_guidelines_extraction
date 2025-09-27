@@ -30,6 +30,7 @@ api_server.log
 scratch/scratch.json
 
 .gemini/
+.github/
 gha-creds-*.json
 
 # Frontend dependencies and build output
