@@ -17,8 +17,9 @@ from guidelines_agent.core.persist_guidelines import persist_guidelines_from_dat
 from guidelines_agent.core.summarize import generate_summary
 from guidelines_agent.core.extract import extract_guidelines_from_pdf
 from guidelines_agent.core.persistence import stamp_missing_embeddings
-from guidelines_agent.agent.agent_main import create_query_agent, create_ingestion_agent
+from guidelines_agent.agent.agent_main import create_query_agent, create_ingestion_agent, create_stateful_query_agent
 from guidelines_agent.core.custom_logging import ISTFormatter
+from guidelines_agent.core.session_store import session_store
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +77,20 @@ class StampEmbeddingOutput(BaseModel):
 class AgentInvokeInput(BaseModel):
     input: str
 
+class SessionChatInput(BaseModel):
+    input: str
+    session_id: Optional[str] = None  # If None, creates new session
+
+class SessionChatOutput(BaseModel):
+    output: str
+    session_id: str
+    
+class CreateSessionInput(BaseModel):
+    context: Optional[Dict[str, Any]] = None
+
+class CreateSessionOutput(BaseModel):
+    session_id: str
+
 # --- Lifespan Manager ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -121,6 +136,127 @@ async def agent_query(request: Request, input: AgentInvokeInput):
         return {"output": response.get("output")}
     except Exception as e:
         logger.error(f"Error during query for input '{input.input}': {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/agent/chat", tags=["Agent"], response_model=SessionChatOutput)
+async def agent_chat(request: Request, input: SessionChatInput):
+    """Enhanced chat endpoint with session management and conversation memory."""
+    logger.info(f"Received chat: {input.input}, session_id: {input.session_id}")
+    
+    try:
+        # Create or get session
+        session_id = input.session_id
+        if not session_id:
+            session_id = session_store.create_session()
+            logger.info(f"Created new session: {session_id}")
+        else:
+            # Verify session exists
+            session = session_store.get_session(session_id)
+            if not session:
+                logger.warning(f"Session {session_id} not found, creating new one")
+                session_id = session_store.create_session()
+        
+        # Create stateful agent with session context
+        def create_and_invoke_agent():
+            agent = create_stateful_query_agent(session_id)
+            
+            # Inject conversation history and session context into input
+            conversation_history = agent._conversation_history
+            session_context = agent._session_context
+            
+            return agent.invoke({
+                "input": input.input,
+                "conversation_history": conversation_history,
+                "session_context": str(session_context) if session_context else "No active context"
+            })
+        
+        # Run the agent
+        response = await run_in_threadpool(create_and_invoke_agent)
+        
+        output = response.get("output", "")
+        logger.info(f"Agent response: {output}")
+        
+        # Store the conversation in session memory
+        session_store.add_message(session_id, input.input, output)
+        
+        return SessionChatOutput(output=output, session_id=session_id)
+        
+    except Exception as e:
+        logger.error(f"Error during chat for input '{input.input}': {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/agent/session/create", tags=["Session"], response_model=CreateSessionOutput)
+async def create_session(input: CreateSessionInput):
+    """Create a new chat session with optional context."""
+    try:
+        session_id = session_store.create_session(input.context)
+        logger.info(f"Created session via API: {session_id}")
+        return CreateSessionOutput(session_id=session_id)
+    except Exception as e:
+        logger.error(f"Error creating session: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/agent/session/{session_id}/history", tags=["Session"])
+async def get_session_history(session_id: str):
+    """Get conversation history for a session."""
+    try:
+        history = session_store.get_conversation_history(session_id)
+        context = session_store.get_context(session_id)
+        
+        if not history and not context:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        return {
+            "session_id": session_id,
+            "conversation_history": history,
+            "context": context
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting session history: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/agent/session/{session_id}/context", tags=["Session"])
+async def update_session_context(session_id: str, context_update: Dict[str, Any]):
+    """Update session context (active portfolios, preferences, etc.)."""
+    try:
+        success = session_store.update_context(session_id, context_update)
+        
+        if not success:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        return {"status": "success", "updated_context": context_update}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating session context: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/agent/session/{session_id}", tags=["Session"])
+async def delete_session(session_id: str):
+    """Delete a session."""
+    try:
+        success = session_store.delete_session(session_id)
+        
+        if not success:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        return {"status": "success", "message": f"Session {session_id} deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting session: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/agent/sessions/stats", tags=["Session"])
+async def get_session_stats():
+    """Get session store statistics."""
+    try:
+        stats = session_store.get_session_stats()
+        return stats
+    except Exception as e:
+        logger.error(f"Error getting session stats: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/agent/ingest", tags=["Agent"])

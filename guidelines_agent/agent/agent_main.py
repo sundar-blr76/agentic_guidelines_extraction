@@ -19,6 +19,7 @@ from guidelines_agent.tools.guideline_tools import (
     generate_upload_summary,
 )
 from guidelines_agent.core.custom_logging import CustomCallbackHandler
+from guidelines_agent.core.session_store import session_store
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -36,7 +37,19 @@ def create_query_agent():
     logger.info(f"Tools loaded: {[tool.name for tool in tools]}")
     
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an assistant that answers questions about investment guidelines. You must use the provided tools to first plan the query, then search for guidelines, and finally summarize the results to form an answer."),
+        ("system", """You are an assistant that answers questions about investment guidelines. You must use the provided tools to first plan the query, then search for guidelines, and finally summarize the results to form an answer.
+
+When conversation history is available, use it to:
+1. Reference previous discussions and maintain context
+2. Build upon earlier questions and answers
+3. Avoid repeating information already established
+4. Provide more personalized responses
+
+Current conversation history:
+{conversation_history}
+
+Active session context:
+{session_context}"""),
         ("user", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
     ])
@@ -57,6 +70,59 @@ def create_query_agent():
     )
     logger.info("AgentExecutor created with custom callback handler. Query agent is ready.")
     
+    return agent_executor
+
+def create_stateful_query_agent(session_id: str = None):
+    """Creates a query agent with session context and conversation history."""
+    logger.info(f"Creating stateful query agent for session: {session_id}")
+    
+    # Get session info
+    conversation_history = ""
+    session_context = {}
+    
+    if session_id:
+        conversation_history = session_store.get_conversation_history(session_id)
+        session_context = session_store.get_context(session_id)
+        logger.info(f"Loaded session context: {len(session_context)} items, history: {len(conversation_history)} chars")
+    
+    tools = [query_planner, guideline_search, summarizer]
+    logger.info(f"Tools loaded: {[tool.name for tool in tools]}")
+    
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", """You are an assistant that answers questions about investment guidelines. You must use the provided tools to first plan the query, then search for guidelines, and finally summarize the results to form an answer.
+
+When conversation history is available, use it to:
+1. Reference previous discussions and maintain context
+2. Build upon earlier questions and answers  
+3. Avoid repeating information already established
+4. Provide more personalized responses
+
+Current conversation history:
+{conversation_history}
+
+Active session context:
+{session_context}"""),
+        ("user", "{input}"),
+        ("placeholder", "{agent_scratchpad}"),
+    ])
+    
+    llm = ChatGoogleGenerativeAI(model=AGENT_MODEL, google_api_key=GEMINI_API_KEY)
+    agent = create_tool_calling_agent(llm, tools, prompt)
+    
+    callback_handler = CustomCallbackHandler()
+    agent_executor = AgentExecutor(
+        agent=agent, 
+        tools=tools, 
+        verbose=True, 
+        callbacks=[callback_handler]
+    )
+    
+    # Store session context in agent for later access
+    agent_executor._session_id = session_id
+    agent_executor._conversation_history = conversation_history
+    agent_executor._session_context = session_context
+    
+    logger.info("Stateful query agent created successfully.")
     return agent_executor
 
 # --- LangGraph Ingestion Workflow ---
