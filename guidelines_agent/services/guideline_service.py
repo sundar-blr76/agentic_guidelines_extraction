@@ -112,6 +112,7 @@ class GuidelineService(BaseService):
             'portfolio_saved': False,
             'document_saved': False,
             'guidelines_saved': 0,
+            'existing_guidelines_removed': 0,
             'errors': []
         }
         
@@ -134,6 +135,7 @@ class GuidelineService(BaseService):
             if existing_count > 0:
                 self.logger.info(f"Portfolio {portfolio.portfolio_id} has {existing_count} existing guidelines. Removing them before ingesting new ones.")
                 removed_count = self.remove_guidelines_by_portfolio(portfolio.portfolio_id)
+                processing_result['existing_guidelines_removed'] = removed_count
                 self.logger.info(f"Removed {removed_count} existing guidelines")
             
             # 2. Create and save document (requires document service)

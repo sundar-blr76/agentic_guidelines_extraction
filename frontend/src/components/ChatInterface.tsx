@@ -73,8 +73,8 @@ const ChatInterface: React.FC = () => {
         const response = await axios.post('http://localhost:8000/agent/ingest', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        responseText = response.data.response;
-        console.info('File uploaded, response received:', responseText);
+        responseText = response.data.message || 'Document processed successfully';
+        console.info('File uploaded, response received:', response.data);
         setSelectedFile(null);
       } else {
         // Regular chat - use new session-aware endpoint

@@ -121,8 +121,10 @@ class AgentService(BaseService):
                 "message": "Document ingestion completed successfully",
                 "doc_id": processing_result['doc_id'],
                 "portfolio_id": processing_result['portfolio_id'],
+                "portfolio_name": extraction_result.portfolio_info.get('portfolio_name', 'Unknown') if extraction_result.portfolio_info else 'Unknown',
                 "guidelines_count": processing_result['guidelines_saved'],
                 "embeddings_generated": embedding_result.get('processed', 0),
+                "existing_guidelines_removed": processing_result.get('existing_guidelines_removed', 0),
                 "validation_summary": extraction_result.validation_summary
             }
             

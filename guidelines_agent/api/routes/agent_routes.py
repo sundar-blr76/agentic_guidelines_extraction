@@ -182,9 +182,23 @@ async def agent_ingest(request: Request, file: UploadFile = File(...)):
         logger.info(f"Progress: {progress_status['message']}")
         logger.info(f"Ingestion results: doc_id={result.get('doc_id')}, portfolio_id={result.get('portfolio_id')}, guidelines={result.get('guidelines_count')}, embeddings={result.get('embeddings_generated')}")
         
+        # Create comprehensive summary
+        summary_parts = [
+            f"✅ Document successfully processed: {file.filename}",
+            f"📂 Portfolio: {result.get('portfolio_id')} ({result.get('portfolio_name', 'N/A')})",
+            f"📋 Guidelines extracted and stored: {result.get('guidelines_count', 0)}",
+            f"🔍 Guidelines prepared for search: {result.get('embeddings_generated', 0)}",
+            f"📄 Document ID: {result.get('doc_id')}"
+        ]
+        
+        if result.get('existing_guidelines_removed'):
+            summary_parts.insert(2, f"🗑️  Removed {result.get('existing_guidelines_removed')} existing guidelines")
+            
+        comprehensive_message = "\n".join(summary_parts)
+        
         return AgentIngestionResponse(
             success=True,
-            message=result.get('message', 'Document processed successfully'),
+            message=comprehensive_message,
             doc_id=result.get('doc_id'),
             portfolio_id=result.get('portfolio_id'),
             guidelines_count=result.get('guidelines_count', 0),
