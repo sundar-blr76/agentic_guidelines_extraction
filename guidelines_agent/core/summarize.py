@@ -4,7 +4,7 @@ import google.generativeai as genai
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GENERATIVE_MODEL = "models/gemini-1.5-flash"
+GENERATIVE_MODEL = "gemini-1.5-flash"
 
 # ==============================================================================
 # --- PROMPT PLACEHOLDER ---
@@ -16,7 +16,7 @@ from rich.console import Console
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GENERATIVE_MODEL = "models/gemini-1.5-flash"
+GENERATIVE_MODEL = "gemini-1.5-flash"
 console = Console()
 
 # ==============================================================================
