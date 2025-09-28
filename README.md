@@ -77,15 +77,50 @@ python3 setup_database.py
 
 ### 4. Start the Application
 
+**Recommended: Use our server management scripts**
+
+```bash
+# Complete server restart with verification (recommended)
+./restart_servers.sh
+
+# Fast daily development restart
+./quick_restart.sh
+
+# Backend only (API development)
+./restart_servers.sh --backend-only
+
+# Frontend only (UI development)  
+./restart_servers.sh --frontend-only
+```
+
+**Manual startup (alternative):**
+
 ```bash
 # Start backend (from project root)
-python3 -m uvicorn guidelines_agent.main:app --host 0.0.0.0 --port 8000 --reload
+./start_server.sh
 
 # Start frontend (in another terminal)
 ./start_frontend.sh
 ```
 
+> 💡 **Tip**: Use `./show_usage.sh` for complete script documentation and development workflow guide.
+
 ### 5. Verify Installation
+
+**Automated verification:**
+
+```bash
+# Complete health check and testing
+./comprehensive_test.sh
+
+# Quick smoke test
+./test_quick.sh
+
+# Check server status
+./restart_servers.sh --status
+```
+
+**Manual verification:**
 
 ```bash
 # Test API
@@ -218,6 +253,21 @@ guidelines_agent/
 
 ### Running Tests
 
+**Comprehensive testing:**
+
+```bash
+# Complete test suite with server health checks
+./comprehensive_test.sh
+
+# Quick regression tests
+./test_quick.sh
+
+# API endpoint testing  
+./test_comprehensive_api.sh
+```
+
+**Traditional pytest:**
+
 ```bash
 # Run all tests
 python3 -m pytest tests/
@@ -342,6 +392,7 @@ This project is licensed under the MIT License - see LICENSE file for details.
 
 ## Documentation
 
+- [Script Documentation](SCRIPT_DOCUMENTATION.md) - Complete development scripts guide
 - [Architecture Documentation](ARCHITECTURE.md) - Detailed system architecture
 - [API Documentation](API.md) - Complete API reference  
 - [Development Guide](RUNBOOK.md) - Setup and development instructions
