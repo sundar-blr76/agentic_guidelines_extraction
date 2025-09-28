@@ -42,7 +42,7 @@ def extract_guidelines_from_pdf(pdf_path: str) -> Dict[str, Any]:
     Core logic to extract and validate guidelines from a PDF file using the Gemini API.
     Returns a single dictionary containing validation status and extracted data.
     """
-    model_name = "gemini-1.5-pro"
+    model_name = "gemini-1.5-flash"
     prompt = """
 You are an expert financial document analyst. Your task is to analyze the provided document and determine if it is an Investment Policy Statement (IPS). Then, you will extract its contents. 
 
