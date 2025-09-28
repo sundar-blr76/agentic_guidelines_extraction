@@ -1,11 +1,11 @@
 import os
 import logging
 from datetime import datetime, timezone, timedelta
-import google.generativeai as genai
 import json
 import re
 from typing import Dict, Any
-from guidelines_agent.core.config import GENERATIVE_MODEL
+from guidelines_agent.core.llm_providers import llm_manager, LLMProvider
+from guidelines_agent.core.config import Config
 
 # --- Custom Logging Configuration ---
 # (Assuming ISTFormatter and logger setup remains the same)
@@ -201,23 +201,54 @@ End of examples.
 """
     
     logging.info(f"Starting extraction and validation for: {pdf_path}")
+    logging.info(f"Using provider: {provider.value}, model: {model}")
     
-    pdf_file = genai.upload_file(path=pdf_path, mime_type="application/pdf")
-    contents = [prompt, pdf_file]
+    # Create metadata for debugging
+    metadata = {
+        "operation": "document_extraction",
+        "file_path": pdf_path,
+        "file_size": os.path.getsize(pdf_path) if os.path.exists(pdf_path) else 0,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
 
-    logging.info("Initiating Google AI API call...")
-    logging.info(f"  - Model: {model_name}")
-    logging.info(f"  - PDF size: {os.path.getsize(pdf_path)} bytes")
+    logging.info("Initiating LLM API call...")
+    logging.info(f"  - Provider: {provider.value}")
+    logging.info(f"  - Model: {model}")
+    logging.info(f"  - PDF size: {metadata['file_size']} bytes")
 
     start_time_utc = datetime.now(timezone.utc)
-    model = genai.GenerativeModel(model_name)
-    response = model.generate_content(contents)
+    
+    # Use the new LLM manager with debug logging
+    response = llm_manager.generate_response(
+        prompt=prompt,
+        model=model,
+        provider=provider,
+        files=[pdf_path] if os.path.exists(pdf_path) else None,
+        temperature=0.1,
+        metadata=metadata
+    )
+    
     end_time_utc = datetime.now(timezone.utc)
     duration = (end_time_utc - start_time_utc).total_seconds()
     
+    if not response.success:
+        logging.error(f"LLM API call failed: {response.error}")
+        return {
+            "success": False,
+            "error": f"LLM generation failed: {response.error}",
+            "provider": provider.value,
+            "model": model,
+            "duration": duration,
+            "latency_ms": response.latency_ms
+        }
+    
     logging.info(f"API call successful. Turnaround Time (TAT): {duration:.2f} seconds")
+    logging.info(f"Response latency: {response.latency_ms}ms")
+    
+    if response.usage:
+        logging.info(f"Token usage: {response.usage}")
 
-    response_text = response.text.strip()
+    response_text = response.content
     json_string = extract_json_from_text(response_text)
 
     if not json_string:

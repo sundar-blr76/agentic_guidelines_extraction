@@ -1,11 +1,12 @@
 import os
 import sys
-import google.generativeai as genai
 from rich.console import Console
-from guidelines_agent.core.config import GENERATIVE_MODEL
+from guidelines_agent.core.llm_providers import llm_manager, LLMProvider
+from guidelines_agent.core.config import Config
 
 # --- Configuration ---
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+GENERATIVE_MODEL = Config.GENERATIVE_MODEL
 console = Console()
 
 # ==============================================================================
@@ -50,21 +51,56 @@ A concise, 1-2 sentence summary that directly answers the user's query.
 # ==============================================================================
 
 
-def generate_summary(query: str, context: str) -> str:
+def generate_summary(query: str, context: str,
+                    provider: LLMProvider = None,
+                    model: str = None) -> str:
     """
     Core logic for generating a summary from a given context based on a query.
-    Designed to be called from an API.
+    Designed to be called from an API with multiple LLM provider support.
+    
+    Args:
+        query: User's question
+        context: Retrieved context to summarize  
+        provider: LLM provider to use (defaults to configured default)
+        model: Model name to use (defaults to provider default)
+        
+    Returns:
+        Generated summary text
     """
-    if not GEMINI_API_KEY:
+    # Use configured defaults if not specified
+    if provider is None:
+        provider = Config.get_default_provider()
+    if model is None:
+        config = Config.get_llm_config(provider)
+        model = config.model if config else GENERATIVE_MODEL
+    
+    if not GEMINI_API_KEY and provider == LLMProvider.GEMINI:
         return "Error: GEMINI_API_KEY environment variable not set."
-    genai.configure(api_key=GEMINI_API_KEY)
 
     prompt = SUMMARIZATION_PROMPT.format(query=query, context=context)
 
     try:
-        model = genai.GenerativeModel(GENERATIVE_MODEL)
-        response = model.generate_content(prompt)
-        return response.text
+        # Create metadata for debugging
+        metadata = {
+            "operation": "text_summarization",
+            "query": query,
+            "context_length": len(context),
+        }
+        
+        # Use the new LLM manager with debug logging
+        response = llm_manager.generate_response(
+            prompt=prompt,
+            model=model,
+            provider=provider,
+            temperature=0.1,
+            metadata=metadata
+        )
+        
+        if not response.success:
+            return f"Error generating summary: {response.error}"
+            
+        return response.content
+        
     except Exception as e:
         return f"Error generating summary: {e}"
 

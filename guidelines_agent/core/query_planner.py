@@ -1,13 +1,12 @@
 import os
 import json
 import sys
-import google.generativeai as genai
-from typing import Dict, Any
-from guidelines_agent.core.config import GENERATIVE_MODEL
+from guidelines_agent.core.llm_providers import llm_manager, LLMProvider
+from guidelines_agent.core.config import Config
 
 # --- Configuration ---
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-PLANNER_MODEL = GENERATIVE_MODEL
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+PLANNER_MODEL = Config.GENERATIVE_MODEL
 
 # ==============================================================================
 # --- PLANNER PROMPT ---
