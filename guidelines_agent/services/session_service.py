@@ -1,4 +1,5 @@
 """Session service for managing user sessions and context."""
+import time
 from typing import Dict, Any, Optional, List
 from guidelines_agent.services.base_service import BaseService
 from guidelines_agent.core.session_store import session_store, SessionInfo
