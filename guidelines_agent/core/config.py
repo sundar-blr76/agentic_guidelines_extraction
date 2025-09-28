@@ -8,3 +8,6 @@ DB_CONFIG = {
     "user": "postgres",
     "password": "postgres",
 }
+
+# Generative Model Configuration
+GENERATIVE_MODEL = "models/gemini-pro-latest"

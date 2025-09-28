@@ -3,10 +3,11 @@ import json
 import sys
 import google.generativeai as genai
 from typing import Dict, Any
+from guidelines_agent.core.config import GENERATIVE_MODEL
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-PLANNER_MODEL = "gemini-1.5-flash"
+PLANNER_MODEL = GENERATIVE_MODEL
 
 # ==============================================================================
 # --- PLANNER PROMPT ---

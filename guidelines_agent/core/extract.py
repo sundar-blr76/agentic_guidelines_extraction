@@ -5,6 +5,7 @@ import google.generativeai as genai
 import json
 import re
 from typing import Dict, Any
+from guidelines_agent.core.config import GENERATIVE_MODEL
 
 # --- Custom Logging Configuration ---
 # (Assuming ISTFormatter and logger setup remains the same)
@@ -42,7 +43,7 @@ def extract_guidelines_from_pdf(pdf_path: str) -> Dict[str, Any]:
     Core logic to extract and validate guidelines from a PDF file using the Gemini API.
     Returns a single dictionary containing validation status and extracted data.
     """
-    model_name = "gemini-1.5-flash"
+    model_name = GENERATIVE_MODEL
     prompt = """
 You are an expert financial document analyst. Your task is to analyze the provided document and determine if it is an Investment Policy Statement (IPS). Then, you will extract its contents. 
 

@@ -20,10 +20,11 @@ from guidelines_agent.tools.guideline_tools import (
 )
 from guidelines_agent.core.custom_logging import CustomCallbackHandler
 from guidelines_agent.core.session_store import session_store
+from guidelines_agent.core.config import GENERATIVE_MODEL
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-AGENT_MODEL = "gemini-1.5-flash"
+AGENT_MODEL = GENERATIVE_MODEL
 console = Console()
 app = typer.Typer()
 logger = logging.getLogger(__name__)

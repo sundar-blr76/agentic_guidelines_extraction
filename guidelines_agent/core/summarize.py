@@ -1,22 +1,11 @@
 import os
 import sys
 import google.generativeai as genai
-
-# --- Configuration ---
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GENERATIVE_MODEL = "gemini-1.5-flash"
-
-# ==============================================================================
-# --- PROMPT PLACEHOLDER ---
-# ==============================================================================
-import os
-import sys
-import google.generativeai as genai
 from rich.console import Console
+from guidelines_agent.core.config import GENERATIVE_MODEL
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GENERATIVE_MODEL = "gemini-1.5-flash"
 console = Console()
 
 # ==============================================================================
@@ -107,23 +96,3 @@ def summarize_cli():
 # For backward compatibility with cli.py
 summarize_context = generate_summary
 
-# ==============================================================================
-
-
-def summarize_context(query: str, context: str):
-    """
-    Generates a summary from a given context block based on a query.
-    """
-    if not GEMINI_API_KEY:
-        print("Error: GEMINI_API_KEY environment variable not set.", file=sys.stderr)
-        return None
-    genai.configure(api_key=GEMINI_API_KEY)
-
-    prompt = SUMMARIZATION_PROMPT.format(query=query, context=context)
-
-    try:
-        model = genai.GenerativeModel(GENERATIVE_MODEL)
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        return f"Error generating summary: {e}"
