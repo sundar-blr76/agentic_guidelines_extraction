@@ -3,6 +3,13 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Build and cache directories (centralized)
+.build_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Python environments
 .Python
 env/
 venv/
@@ -37,12 +44,5 @@ gha-creds-*.json
 frontend/node_modules/
 frontend/build/
 
-# Caching
-.pytest_cache/
-.ruff_cache/
-
 # Temporary files
-temp_**.pyc
-__pycache__/
-*.pyo
-*.pyd
+temp_*
