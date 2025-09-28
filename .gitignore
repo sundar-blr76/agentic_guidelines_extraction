@@ -42,4 +42,7 @@ frontend/build/
 .ruff_cache/
 
 # Temporary files
-temp_*
+temp_**.pyc
+__pycache__/
+*.pyo
+*.pyd

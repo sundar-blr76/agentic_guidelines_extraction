@@ -8,7 +8,7 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from guidelines_agent.mcp_server.main import app
+from guidelines_agent.main import app
 
 @pytest_asyncio.fixture
 async def client():
