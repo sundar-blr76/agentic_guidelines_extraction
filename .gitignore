@@ -40,9 +40,22 @@ scratch/scratch.json
 .github/
 gha-creds-*.json
 
-# Frontend dependencies and build output
+# Frontend - React specific
 frontend/node_modules/
 frontend/build/
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
 
 # Temporary files
 temp_*
+
+# Runtime files
+*.pid

@@ -141,34 +141,71 @@ async def agent_ingest(request: Request, file: UploadFile = File(...)):
     """Ingest a PDF document by uploading the file."""
     logger.info(f"Agent ingest file: {file.filename}")
     
+    # Initialize progress tracking
+    progress_status = {
+        "stage": "starting",
+        "message": "Starting document ingestion...",
+        "progress": 0
+    }
+    
     try:
         if not file.filename.lower().endswith('.pdf'):
             raise HTTPException(status_code=400, detail="Only PDF files are supported")
         
+        progress_status.update({"stage": "reading", "message": "Reading uploaded file...", "progress": 10})
+        logger.info(f"Progress: {progress_status['message']}")
+        
         # Read file content
         file_content = await file.read()
+        file_size_mb = len(file_content) / (1024 * 1024)
+        logger.info(f"File size: {file_size_mb:.2f} MB")
+        
+        progress_status.update({"stage": "processing", "message": "Processing document with AI...", "progress": 30})
+        logger.info(f"Progress: {progress_status['message']}")
         
         # Process the file
         result = agent_service.process_file_upload_ingestion(file_content, file.filename)
         
         if not result['success']:
-            raise HTTPException(status_code=500, detail=result['error'])
+            logger.error(f"Document ingestion failed: {result.get('error', 'Unknown error')}")
+            return AgentIngestionResponse(
+                success=False,
+                message=f"Document ingestion failed: {result.get('error', 'Unknown error')}",
+                doc_id=None,
+                portfolio_id=None,
+                guidelines_count=0,
+                embeddings_generated=0,
+                validation_summary=result.get('details', 'No details available')
+            )
+        
+        progress_status.update({"stage": "completed", "message": "Document ingestion completed successfully!", "progress": 100})
+        logger.info(f"Progress: {progress_status['message']}")
+        logger.info(f"Ingestion results: doc_id={result.get('doc_id')}, portfolio_id={result.get('portfolio_id')}, guidelines={result.get('guidelines_count')}, embeddings={result.get('embeddings_generated')}")
         
         return AgentIngestionResponse(
             success=True,
-            message=result['message'],
+            message=result.get('message', 'Document processed successfully'),
             doc_id=result.get('doc_id'),
             portfolio_id=result.get('portfolio_id'),
-            guidelines_count=result.get('guidelines_count'),
-            embeddings_generated=result.get('embeddings_generated'),
-            validation_summary=result.get('validation_summary')
+            guidelines_count=result.get('guidelines_count', 0),
+            embeddings_generated=result.get('embeddings_generated', 0),
+            validation_summary=result.get('validation_summary', 'Document validation completed')
         )
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error in agent ingest: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        error_msg = f"Unexpected error in agent ingest: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        return AgentIngestionResponse(
+            success=False,
+            message=error_msg,
+            doc_id=None,
+            portfolio_id=None,
+            guidelines_count=0,
+            embeddings_generated=0,
+            validation_summary=f"Error during processing: {str(e)}"
+        )
 
 
 @router.get("/stats", response_model=AgentStatsResponse)

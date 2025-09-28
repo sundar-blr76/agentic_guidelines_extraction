@@ -273,3 +273,14 @@ class GuidelineRepository(BaseRepository):
             structured_data=structured_data,
             embedding=row['embedding']
         )
+    
+    def delete_by_portfolio(self, portfolio_id: str) -> int:
+        """Delete all guidelines for a specific portfolio."""
+        try:
+            command = "DELETE FROM guideline WHERE portfolio_id = %s"
+            deleted_count = self._execute_command(command, (portfolio_id,))
+            logger.info(f"Deleted {deleted_count} guidelines for portfolio {portfolio_id}")
+            return deleted_count
+        except Exception as e:
+            logger.error(f"Error deleting guidelines for portfolio {portfolio_id}: {e}")
+            return 0

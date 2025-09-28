@@ -129,6 +129,13 @@ class GuidelineService(BaseService):
                 processing_result['errors'].append("Failed to save portfolio")
                 return processing_result
             
+            # Check if this portfolio already has guidelines - if so, remove them first
+            existing_count = self.get_guideline_count_by_portfolio(portfolio.portfolio_id)
+            if existing_count > 0:
+                self.logger.info(f"Portfolio {portfolio.portfolio_id} has {existing_count} existing guidelines. Removing them before ingesting new ones.")
+                removed_count = self.remove_guidelines_by_portfolio(portfolio.portfolio_id)
+                self.logger.info(f"Removed {removed_count} existing guidelines")
+            
             # 2. Create and save document (requires document service)
             from guidelines_agent.services.document_service import DocumentService
             doc_service = DocumentService()
@@ -263,4 +270,13 @@ class GuidelineService(BaseService):
         except Exception as e:
             error_msg = f"Error generating missing embeddings: {str(e)}"
             self.logger.error(error_msg, exc_info=True)
+            return {'success': False, 'error': error_msg}
+    
+    def remove_guidelines_by_portfolio(self, portfolio_id: str) -> int:
+        """Remove all guidelines for a specific portfolio."""
+        try:
+            return self.guideline_repo.delete_by_portfolio(portfolio_id)
+        except Exception as e:
+            self.logger.error(f"Error removing guidelines for portfolio {portfolio_id}: {e}")
+            return 0
             return {'success': False, 'error': error_msg}

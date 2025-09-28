@@ -104,10 +104,13 @@ class AgentService(BaseService):
             )
             
             if not processing_result['success']:
+                error_details = processing_result.get('errors', 'Processing failed')
+                if isinstance(error_details, list):
+                    error_details = '; '.join(str(e) for e in error_details)
                 return {
                     "success": False,
                     "error": "Failed to persist extracted data",
-                    "details": processing_result['errors']
+                    "details": str(error_details)
                 }
             
             # Step 3: Generate embeddings for new guidelines

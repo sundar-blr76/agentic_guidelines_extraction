@@ -47,6 +47,7 @@ setup_logging()
 # Import route modules
 from guidelines_agent.api.routes.agent_routes import router as agent_router
 from guidelines_agent.api.routes.session_routes import router as session_router
+from guidelines_agent.api.routes.config_routes import router as config_router
 from guidelines_agent.api.routes.mcp_routes import router as mcp_router
 
 # Import services for startup
@@ -109,7 +110,8 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Include routers
 app.include_router(agent_router)
-app.include_router(session_router)  
+app.include_router(session_router)
+app.include_router(config_router)  
 app.include_router(mcp_router)
 
 
@@ -123,7 +125,8 @@ async def root():
         "documentation": "/docs",
         "endpoints": {
             "agent": "/agent/* - High-level user-facing operations",
-            "sessions": "/sessions/* - Session management", 
+            "sessions": "/sessions/* - Session management",
+            "config": "/config - System configuration and provider info", 
             "mcp": "/mcp/* - Internal tool endpoints for agents"
         }
     }
