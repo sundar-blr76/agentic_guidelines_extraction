@@ -47,7 +47,7 @@ class AgentService(BaseService):
                 agent = self.get_stateful_query_agent(session_id)
                 
                 # Get session context for better prompting
-                session_info = session_store.get_session_info(session_id)
+                session_info = session_store.get_session(session_id)
                 conversation_history = session_info.get_conversation_history() if session_info else ""
                 session_context = session_info.get_context_summary() if session_info else "No active context"
                 

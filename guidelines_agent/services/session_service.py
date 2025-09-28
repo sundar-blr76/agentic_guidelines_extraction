@@ -33,7 +33,7 @@ class SessionService(BaseService):
     def get_session_info(self, session_id: str) -> Dict[str, Any]:
         """Get session information and context."""
         try:
-            session_info = session_store.get_session_info(session_id)
+            session_info = session_store.get_session(session_id)
             if not session_info:
                 return {
                     "success": False,
@@ -64,7 +64,7 @@ class SessionService(BaseService):
     def get_session_history(self, session_id: str, limit: Optional[int] = None) -> Dict[str, Any]:
         """Get session conversation history."""
         try:
-            session_info = session_store.get_session_info(session_id)
+            session_info = session_store.get_session(session_id)
             if not session_info:
                 return {
                     "success": False,
@@ -98,7 +98,7 @@ class SessionService(BaseService):
     def update_session_context(self, session_id: str, context_update: Dict[str, Any]) -> Dict[str, Any]:
         """Update session context with new information."""
         try:
-            session_info = session_store.get_session_info(session_id)
+            session_info = session_store.get_session(session_id)
             if not session_info:
                 return {
                     "success": False,
