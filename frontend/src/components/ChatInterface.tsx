@@ -73,7 +73,7 @@ const ChatInterface: React.FC = () => {
         const response = await axios.post('http://localhost:8000/agent/ingest', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        responseText = response.data.output;
+        responseText = response.data.response;
         console.info('File uploaded, response received:', responseText);
         setSelectedFile(null);
       } else {
@@ -82,7 +82,7 @@ const ChatInterface: React.FC = () => {
           message: userMessage,
           session_id: sessionId
         });
-        responseText = response.data.output;
+        responseText = response.data.response;
         newSessionId = response.data.session_id;
         
         // Update session ID if it changed (e.g., first message)
