@@ -6,7 +6,7 @@ from typing import Dict, Any
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-PLANNER_MODEL = "models/gemini-1.5-pro-latest"
+PLANNER_MODEL = "models/gemini-1.5-pro"
 
 # ==============================================================================
 # --- PLANNER PROMPT ---

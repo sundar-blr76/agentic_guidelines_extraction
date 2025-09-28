@@ -23,7 +23,7 @@ from guidelines_agent.core.session_store import session_store
 
 # --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-AGENT_MODEL = "gemini-pro-latest"
+AGENT_MODEL = "gemini-1.5-pro"
 console = Console()
 app = typer.Typer()
 logger = logging.getLogger(__name__)
