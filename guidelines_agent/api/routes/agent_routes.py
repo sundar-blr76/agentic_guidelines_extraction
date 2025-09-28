@@ -18,32 +18,6 @@ agent_service = AgentService()
 session_service = SessionService()
 
 
-@router.post("/query", response_model=AgentQueryResponse)
-async def agent_query(request: Request, query_request: AgentQueryRequest):
-    """Process a natural language query about investment guidelines."""
-    logger.info(f"Agent query: {query_request.query[:100]}...")
-    
-    try:
-        result = agent_service.process_query(
-            query=query_request.query,
-            portfolio_ids=query_request.portfolio_ids,
-            session_id=query_request.session_id
-        )
-        
-        if not result['success']:
-            raise HTTPException(status_code=500, detail=result['error'])
-        
-        return AgentQueryResponse(
-            success=True,
-            response=result['response'],
-            session_id=result.get('session_id'),
-            message="Query processed successfully"
-        )
-        
-    except Exception as e:
-        logger.error(f"Error in agent query: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/chat", response_model=AgentChatResponse)
 async def agent_chat(request: Request, chat_request: AgentChatRequest):

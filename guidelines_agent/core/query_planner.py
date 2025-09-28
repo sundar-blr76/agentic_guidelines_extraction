@@ -16,28 +16,47 @@ PLANNER_PROMPT = """
 You are an intelligent assistant that deconstructs a user's request into a structured plan for a retrieval and summarization system.
 Your task is to analyze the user's query and extract three key pieces of information.
 
+**CONTEXT AWARENESS:** 
+- If the user refers to "this fund", "the fund", "same portfolio", or similar contextual references, the query is likely a follow-up to previous conversation
+- For contextual queries, expand the search to include broader terms while maintaining the specific intent
+- Consider conversation flow - follow-up questions often seek different aspects of the same entity
+
 Your output MUST be a single, valid JSON object with the following keys:
-1.  `search_query`: A concise string optimized for semantic vector search. This should be a "bag of keywords" or a simple noun phrase that captures the core topic of the request.
-2.  `summary_instruction`: A clear, natural language question or command that will be given to a summarization model. This should be the user's complete, original question or a well-formed version of it.
-3.  `top_k`: The number of documents to retrieve. If the user specifies a number (e.g., "top 5", "give me 10"), use that number. If not specified, you MUST default to 7.
+1.  `search_query`: A concise string optimized for semantic vector search. For contextual queries like "ESG guidelines of this fund", use specific terms like "ESG guidelines" that will match regardless of which fund is discussed.
+2.  `summary_instruction`: A clear, natural language question or command that will be given to a summarization model. This should preserve the user's original intent and context.
+3.  `top_k`: The number of documents to retrieve. If the user specifies a number (e.g., "top 5", "give me 10"), use that number. For follow-up contextual questions, default to 100. For broad initial questions, default to 25.
 
 Here are some examples:
 
 ---
+**Initial Query:**
 User Query: "what are the rules for emerging markets? give me the top 5"
 {{
   "search_query": "emerging market investment rules and restrictions",
   "summary_instruction": "What are the rules for emerging markets?",
   "top_k": 5
 }}
+
 ---
+**Follow-up Contextual Query:**
+User Query: "Get me ESG guidelines of this fund" (following previous discussion about UN Pension Fund)
+{{
+  "search_query": "ESG guidelines",
+  "summary_instruction": "Get me ESG guidelines of this fund.",
+  "top_k": 7
+}}
+
+---
+**General Query:**
 User Query: "summarize the guidelines on private equity"
 {{
   "search_query": "private equity guidelines",
   "summary_instruction": "Summarize the guidelines on private equity.",
   "top_k": 7
 }}
+
 ---
+**Specific Query:**
 User Query: "tell me about any restrictions on using derivatives, I need about 10 results"
 {{
   "search_query": "restrictions on using derivatives",
