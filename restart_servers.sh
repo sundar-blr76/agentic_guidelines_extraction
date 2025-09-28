@@ -374,7 +374,7 @@ main() {
     echo "=========================================="
     echo "💡 Starting comprehensive server management..."
     echo "   Backend (FastAPI): Port $BACKEND_PORT"
-    echo "   Frontend (React):  Port $FRONTEND_PORT" 
+    echo "   Frontend (React):  Port $FRONTEND_PORT"
     echo "   Log clearing:      Enabled"
     echo "   Health checks:     Enabled"
     echo ""
