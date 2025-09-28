@@ -40,10 +40,14 @@ def extract_json_from_text(text: str) -> str:
 
 def extract_guidelines_from_pdf(pdf_path: str) -> Dict[str, Any]:
     """
-    Core logic to extract and validate guidelines from a PDF file using the Gemini API.
+    Core logic to extract and validate guidelines from a PDF file using the configured LLM provider.
     Returns a single dictionary containing validation status and extracted data.
     """
-    model_name = GENERATIVE_MODEL
+    # Get default provider and model configuration
+    config_provider = Config.get_default_provider()
+    provider = config_provider  # Use the provider directly from config
+    config = Config.get_llm_config(config_provider)  # Use config enum for config lookup
+    model = config.model if config else Config.GENERATIVE_MODEL
     prompt = """
 You are an expert financial document analyst. Your task is to analyze the provided document and determine if it is an Investment Policy Statement (IPS). Then, you will extract its contents. 
 

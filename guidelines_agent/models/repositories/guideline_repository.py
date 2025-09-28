@@ -250,9 +250,15 @@ class GuidelineRepository(BaseRepository):
         structured_data = None
         if row['structured_data']:
             try:
-                structured_data = json.loads(row['structured_data'])
-            except json.JSONDecodeError:
+                # Check if it's already a dict/object
+                if isinstance(row['structured_data'], (dict, list)):
+                    structured_data = row['structured_data']
+                else:
+                    # Try to parse as JSON string
+                    structured_data = json.loads(row['structured_data'])
+            except (json.JSONDecodeError, TypeError):
                 logger.warning(f"Invalid JSON in structured_data for {row['portfolio_id']}/{row['rule_id']}")
+                structured_data = None
         
         return Guideline(
             portfolio_id=row['portfolio_id'],

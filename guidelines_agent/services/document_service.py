@@ -33,11 +33,25 @@ class DocumentService(BaseService):
             
             # Convert to our ExtractionResult format
             if isinstance(result, dict):
+                # Build portfolio_info from individual fields if not present
+                portfolio_info = result.get('portfolio_info', {})
+                if not portfolio_info:
+                    # Extract portfolio info from individual fields
+                    portfolio_info = {
+                        'portfolio_id': result.get('portfolio_id'),
+                        'portfolio_name': result.get('portfolio_name'),
+                        'doc_id': result.get('doc_id'),
+                        'doc_name': result.get('doc_name'),
+                        'doc_date': result.get('doc_date')
+                    }
+                    # Remove None values
+                    portfolio_info = {k: v for k, v in portfolio_info.items() if v is not None}
+                    
                 return ExtractionResult(
                     is_valid=result.get('is_valid_document', False),
                     validation_summary=result.get('validation_summary', 'No validation summary'),
                     guidelines=result.get('guidelines', []),
-                    portfolio_info=result.get('portfolio_info', {}),
+                    portfolio_info=portfolio_info,
                     error_message=result.get('error_message')
                 )
             else:

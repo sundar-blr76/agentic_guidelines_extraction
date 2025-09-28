@@ -18,7 +18,9 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Optional, Union
 from datetime import datetime
 from dataclasses import dataclass
-from enum import Enum
+
+# Use LLMProvider from config to avoid duplication
+from .config import LLMProvider
 
 # Provider-specific imports (lazy loaded)
 try:
@@ -38,14 +40,6 @@ try:
     ANTHROPIC_AVAILABLE = True
 except ImportError:
     ANTHROPIC_AVAILABLE = False
-
-
-class LLMProvider(Enum):
-    """Supported LLM providers"""
-    GEMINI = "gemini"
-    OPENAI = "openai"
-    ANTHROPIC = "anthropic"
-    MOCK = "mock"  # For development/testing
 
 
 @dataclass
@@ -312,6 +306,80 @@ class OpenAIProvider(BaseLLMProvider):
             return error_response
 
 
+class AnthropicProvider(BaseLLMProvider):
+    """Anthropic Claude LLM Provider"""
+    
+    def __init__(self, debug_logger: LLMDebugLogger):
+        super().__init__(debug_logger)
+        self.api_key = os.getenv("ANTHROPIC_API_KEY")
+    
+    def is_available(self) -> bool:
+        return ANTHROPIC_AVAILABLE and bool(self.api_key)
+    
+    def generate_response(self, request: LLMRequest) -> LLMResponse:
+        start_time = time.time()
+        request_id = f"anthropic_{int(start_time * 1000)}"
+        
+        try:
+            self.debug_logger.log_request(request, request_id)
+            
+            client = anthropic.Anthropic(api_key=self.api_key)
+            
+            # Prepare messages
+            messages = [{"role": "user", "content": request.prompt}]
+            
+            # Make API call
+            response = client.messages.create(
+                model=request.model,
+                max_tokens=request.max_tokens or 4096,
+                temperature=request.temperature,
+                messages=messages,
+                system=request.system_prompt if request.system_prompt else None
+            )
+            
+            end_time = time.time()
+            latency_ms = int((end_time - start_time) * 1000)
+            
+            content = response.content[0].text.strip()
+            usage = {
+                "input_tokens": response.usage.input_tokens,
+                "output_tokens": response.usage.output_tokens,
+                "total_tokens": response.usage.input_tokens + response.usage.output_tokens
+            }
+            
+            llm_response = LLMResponse(
+                content=content,
+                provider=LLMProvider.ANTHROPIC,
+                model=request.model,
+                usage=usage,
+                latency_ms=latency_ms,
+                success=True,
+                request_id=request_id,
+                raw_response=response.dict() if hasattr(response, 'dict') else str(response)
+            )
+            
+            self.debug_logger.log_response(llm_response, request_id)
+            return llm_response
+            
+        except Exception as e:
+            end_time = time.time()
+            latency_ms = int((end_time - start_time) * 1000)
+            
+            error_response = LLMResponse(
+                content="",
+                provider=LLMProvider.ANTHROPIC,
+                model=request.model,
+                usage=None,
+                latency_ms=latency_ms,
+                success=False,
+                error=str(e),
+                request_id=request_id
+            )
+            
+            self.debug_logger.log_response(error_response, request_id)
+            return error_response
+
+
 class MockProvider(BaseLLMProvider):
     """Mock LLM Provider for development/testing"""
     
@@ -388,6 +456,7 @@ class LLMManager:
         """Initialize available providers"""
         self.providers[LLMProvider.GEMINI] = GeminiProvider(self.debug_logger)
         self.providers[LLMProvider.OPENAI] = OpenAIProvider(self.debug_logger)
+        self.providers[LLMProvider.ANTHROPIC] = AnthropicProvider(self.debug_logger)
         self.providers[LLMProvider.MOCK] = MockProvider(self.debug_logger)
     
     def get_available_providers(self) -> List[LLMProvider]:

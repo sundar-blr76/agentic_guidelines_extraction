@@ -60,25 +60,29 @@ def generate_query_plan(user_query: str,
     Uses a generative model to create a structured plan from a user query.
     Designed to be called from an API.
     """
-    if not GEMINI_API_KEY:
-        return {"error": "GEMINI_API_KEY environment variable not set."}
-    genai.configure(api_key=GEMINI_API_KEY)
-
     prompt = PLANNER_PROMPT.format(query=user_query)
-    llm_response_text = ""
+    
     try:
-        model = genai.GenerativeModel(PLANNER_MODEL)
-        response = model.generate_content(prompt)
-        llm_response_text = response.text
-
+        # Use the new LLM manager instead of direct genai calls
+        response = llm_manager.generate_response(
+            prompt=prompt,
+            provider=provider or LLMProvider.GEMINI,
+            model=model or PLANNER_MODEL,
+            temperature=0.1
+        )
+        
+        if not response.success:
+            return {"error": f"LLM API call failed: {response.error}"}
+        
         # Clean the response to ensure it's valid JSON
-        json_text = llm_response_text.strip().replace("```json", "").replace("```", "")
+        json_text = response.content.strip().replace("```json", "").replace("```", "")
         plan = json.loads(json_text)
         return plan
+        
     except Exception as e:
         return {
             "error": f"Error creating plan: {e}",
-            "llm_response": llm_response_text
+            "llm_response": getattr(response, 'content', '') if 'response' in locals() else ""
         }
 
 

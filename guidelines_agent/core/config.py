@@ -46,13 +46,13 @@ class Config:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///guidelines.db")
-    GENERATIVE_MODEL = "gemini-1.5-flash"  # Updated from legacy "models/gemini-pro-latest"
+    GENERATIVE_MODEL = "models/gemini-pro-latest"  # Using latest available model
     
     # LLM Provider Configurations
     LLM_CONFIGS = {
         LLMProvider.GEMINI: LLMConfig(
             provider=LLMProvider.GEMINI,
-            model="gemini-1.5-flash",
+            model="models/gemini-pro-latest",
             temperature=0.1,
             max_tokens=8192,
             api_key_env_var="GEMINI_API_KEY"
