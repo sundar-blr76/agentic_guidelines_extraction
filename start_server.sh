@@ -10,6 +10,10 @@ echo "🚀 Starting server with centralized caching..."
 echo "📁 Python cache: .build_cache/pycache/"
 echo "📁 Pytest cache: .build_cache/pytest/"
 echo "📁 Ruff cache: .build_cache/ruff/"
+echo "📝 Logs will be written to: logs/api_server.log"
 echo "🐍 Using virtual environment: $(which python3)"
+
+# Ensure logs directory exists
+mkdir -p logs
 
 python3 -m uvicorn guidelines_agent.main:app --host 0.0.0.0 --port 8000 --reload

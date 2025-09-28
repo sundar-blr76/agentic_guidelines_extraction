@@ -8,8 +8,10 @@ This replaces the old mcp_server/main.py with a cleaner structure:
 - Clean dependency injection
 """
 import logging
+import logging.config
 import os
 import sys
+import yaml
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,6 +19,30 @@ from fastapi.responses import JSONResponse
 
 # Add project root to Python path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Configure logging from YAML file
+def setup_logging():
+    """Setup logging configuration from logging.yaml"""
+    logging_config_path = os.path.join(os.path.dirname(__file__), '..', 'logging.yaml')
+    if os.path.exists(logging_config_path):
+        with open(logging_config_path, 'r') as f:
+            config = yaml.safe_load(f)
+            logging.config.dictConfig(config)
+        print(f"✅ Logging configured from {logging_config_path}")
+    else:
+        # Fallback to basic logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(levelname)-8s - %(name)s - %(message)s",
+            handlers=[
+                logging.FileHandler("logs/api_server.log"),
+                logging.StreamHandler()
+            ]
+        )
+        print("⚠️ Using fallback logging configuration")
+
+# Setup logging before importing other modules
+setup_logging()
 
 # Import route modules
 from guidelines_agent.api.routes.agent_routes import router as agent_router
