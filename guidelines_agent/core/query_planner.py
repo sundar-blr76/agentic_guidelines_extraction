@@ -1,6 +1,7 @@
 import os
 import json
 import sys
+from typing import Dict, Any
 from guidelines_agent.core.llm_providers import llm_manager, LLMProvider
 from guidelines_agent.core.config import Config
 
@@ -52,7 +53,9 @@ User Query: "{query}"
 # ==============================================================================
 
 
-def generate_query_plan(user_query: str) -> Dict[str, Any]:
+def generate_query_plan(user_query: str, 
+                       provider: LLMProvider = None,
+                       model: str = None) -> dict:
     """
     Uses a generative model to create a structured plan from a user query.
     Designed to be called from an API.
