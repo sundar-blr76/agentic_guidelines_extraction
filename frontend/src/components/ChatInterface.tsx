@@ -134,7 +134,7 @@ const ChatInterface: React.FC = () => {
   const loadSessionStats = async () => {
     try {
       const response = await axios.get('http://localhost:8000/sessions');
-      setSessionStats(response.data);
+      setSessionStats(response.data.stats);
     } catch (error) {
       console.error('Failed to load session stats:', error);
     }
