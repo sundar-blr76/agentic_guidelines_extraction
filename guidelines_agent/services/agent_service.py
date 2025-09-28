@@ -48,8 +48,8 @@ class AgentService(BaseService):
                 
                 # Get session context for better prompting
                 session_info = session_store.get_session(session_id)
-                conversation_history = session_info.get_conversation_history() if session_info else ""
-                session_context = session_info.get_context_summary() if session_info else "No active context"
+                conversation_history = session_store.get_conversation_history(session_id) if session_info else ""
+                session_context = f"Active session: {session_id}" if session_info else "No active context"
                 
                 response = agent.invoke({
                     "input": query,
