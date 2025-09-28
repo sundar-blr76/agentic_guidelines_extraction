@@ -44,11 +44,9 @@ class SessionService(BaseService):
                 "success": True,
                 "session": {
                     "session_id": session_id,
-                    "user_id": session_info.user_id,
-                    "created_at": session_info.created_at.isoformat(),
-                    "last_activity": session_info.last_activity.isoformat(),
-                    "interaction_count": len(session_info.interactions),
-                    "context_summary": f"Active session: {session_id}",
+                    "created_at": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(session_info.created_at)),
+                    "last_accessed": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(session_info.last_accessed)),
+                    "context": session_info.context,
                     "conversation_history": session_store.get_conversation_history(session_id)
                 }
             }
@@ -163,9 +161,9 @@ class SessionService(BaseService):
             return {
                 "success": True,
                 "stats": {
-                    "total_sessions": stats['total_sessions'],
-                    "active_sessions": stats['active_sessions'],
-                    "sessions_last_hour": stats['sessions_last_hour']
+                    "total_sessions": stats.get('total_sessions', 0),
+                    "active_sessions": stats.get('active_sessions', 0),
+                    "sessions_last_hour": stats.get('sessions_last_hour', 0)
                 }
             }
             

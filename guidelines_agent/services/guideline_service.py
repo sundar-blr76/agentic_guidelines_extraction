@@ -206,7 +206,7 @@ class GuidelineService(BaseService):
         """Search guidelines using semantic/vector search."""
         try:
             # Generate embedding for the query
-            query_embedding = generate_embeddings([query_text])
+            query_embedding = generate_embeddings([query_text], task_type="retrieval_query")
             if not query_embedding or not query_embedding[0]:
                 self.logger.error("Failed to generate query embedding")
                 return []
@@ -240,7 +240,7 @@ class GuidelineService(BaseService):
             
             # Extract texts for batch embedding generation
             texts = [guideline.text for guideline in guidelines]
-            embeddings = generate_embeddings(texts)
+            embeddings = generate_embeddings(texts, task_type="retrieval_document")
             
             if not embeddings or len(embeddings) != len(texts):
                 return {'success': False, 'error': 'Failed to generate embeddings'}
