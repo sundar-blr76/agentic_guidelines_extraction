@@ -26,7 +26,7 @@ const ChatInterface: React.FC = () => {
 
   const createNewSession = async () => {
     try {
-      const response = await axios.post('http://172.24.160.231:8000/agent/session/create', {
+      const response = await axios.post('http://localhost:8000/sessions', {
         context: { created_at: new Date().toISOString() }
       });
       setSessionId(response.data.session_id);
@@ -39,7 +39,7 @@ const ChatInterface: React.FC = () => {
 
   const loadSessionStats = async () => {
     try {
-      const response = await axios.get('http://172.24.160.231:8000/agent/sessions/stats');
+      const response = await axios.get('http://localhost:8000/sessions');
       setSessionStats(response.data);
     } catch (error) {
       console.error('Failed to load session stats:', error);
@@ -70,7 +70,7 @@ const ChatInterface: React.FC = () => {
         // File upload - use existing endpoint
         const formData = new FormData();
         formData.append('file', selectedFile);
-        const response = await axios.post('http://172.24.160.231:8000/agent/ingest', formData, {
+        const response = await axios.post('http://localhost:8000/agent/ingest', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         responseText = response.data.output;
@@ -78,8 +78,8 @@ const ChatInterface: React.FC = () => {
         setSelectedFile(null);
       } else {
         // Regular chat - use new session-aware endpoint
-        const response = await axios.post('http://172.24.160.231:8000/agent/chat', { 
-          input: userMessage,
+        const response = await axios.post('http://localhost:8000/agent/chat', { 
+          message: userMessage,
           session_id: sessionId
         });
         responseText = response.data.output;
