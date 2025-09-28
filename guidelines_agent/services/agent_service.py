@@ -59,7 +59,7 @@ class AgentService(BaseService):
                 
                 # Update session with the new interaction
                 if session_info:
-                    session_info.add_interaction(query, response.get("output", ""))
+                    session_store.add_message(session_id, query, response.get("output", ""))
                 
             else:
                 # Use stateless agent for simple queries

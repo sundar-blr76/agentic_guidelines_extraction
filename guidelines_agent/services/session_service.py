@@ -48,8 +48,8 @@ class SessionService(BaseService):
                     "created_at": session_info.created_at.isoformat(),
                     "last_activity": session_info.last_activity.isoformat(),
                     "interaction_count": len(session_info.interactions),
-                    "context_summary": session_info.get_context_summary(),
-                    "conversation_history": session_info.get_conversation_history()
+                    "context_summary": f"Active session: {session_id}",
+                    "conversation_history": session_store.get_conversation_history(session_id)
                 }
             }
             
