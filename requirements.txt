@@ -75,3 +75,5 @@ xxhash==3.5.0
 zstandard==0.24.0
 python-multipart==0.0.20
 PyYAML
+pytest==7.4.3
+pytest-cov==4.1.0
